@@ -1,5 +1,5 @@
 {
-  "name": "@zcf0508/vuex-typed",
+  "name": "z-vuex-typed",
   "type": "module",
   "version": "0.0.1",
   "packageManager": "pnpm@7.33.6",

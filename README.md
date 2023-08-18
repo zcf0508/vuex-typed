@@ -1,6 +1,6 @@
 # vuex-typed
 
-[![NPM version](https://img.shields.io/npm/v/@zcf0508/vuex-typed?color=a1b858&label=)](https://www.npmjs.com/package/@zcf0508/vuex-typed)
+[![NPM version](https://img.shields.io/npm/v/z-vuex-typed?color=a1b858&label=)](https://www.npmjs.com/package/z-vuex-typed)
 
 This is a typed vuex@3.
 
@@ -10,7 +10,7 @@ This is a typed vuex@3.
 
 ```js
 // src/store/modules/user.js
-import { defineModule } from '@zcf0508/vuex-typed'
+import { defineModule } from 'z-vuex-typed'
 
 const userModule = defineModule({
   state: {
@@ -47,7 +47,7 @@ export default userModule
 
 ```js
 // src/store/index.js
-import { defineStore } from '@zcf0508/vuex-typed'
+import { defineStore } from 'z-vuex-typed'
 import user from './modules/usre'
 
 const {
