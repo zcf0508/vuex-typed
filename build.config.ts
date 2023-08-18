@@ -10,4 +10,5 @@ export default defineBuildConfig({
     emitCJS: true,
   },
   externals: ['vue'],
+  failOnWarn: false,
 })
