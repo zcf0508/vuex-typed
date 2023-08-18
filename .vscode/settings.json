@@ -1,10 +1,10 @@
 {
-	"eslint.format.enable": true,
+  "eslint.format.enable": true,
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true
+    "source.fixAll.eslint": true
   },
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
-  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

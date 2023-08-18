@@ -1,4 +1,4 @@
-import { defineModule } from "../../src"
+import { defineModule } from '../../src'
 
 export const userModule = defineModule({
   state: {

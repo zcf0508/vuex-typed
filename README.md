@@ -21,7 +21,7 @@ const userModule = defineModule({
      * @param {string} payload
      */
     SET_NAME(state, payload) {
-          //  ^ type of `state` is `{name: string}`
+      //      ^ type of `state` is `{name: string}`
       state.name = payload
     },
   },
@@ -31,12 +31,12 @@ const userModule = defineModule({
      */
     async setName({ commit }, payload) {
       commit('SET_NAME', await getUserById(payload))
-          //  ^ commit type and `payload` type are specific 
-    }
-  }，
+      //  ^ commit type and `payload` type are specific
+    },
+  },
   getters: {
-    usernam: (state) => state.name
-    // ^ the return type is `string`
+    usernam: state => state.name
+    //  ^ the return type is `string`
   }
 })
 
@@ -61,8 +61,8 @@ const {
     user
   },
   getters: {
-    gUsername: (state) => state.user.name
-                        //  ^  type of state is specific
+    gUsername: state => state.user.name
+    //  ^  type of state is specific
   }
 })
 
@@ -79,21 +79,20 @@ First, **change store type declare** .
 
 ```ts
 // src/shims-vuex.d.ts
-import Vue, { ComponentOptions } from "vue";
-import { store } from "@/store";
+import Vue, { ComponentOptions } from 'vue'
+import { store } from '@/store'
 
-declare module "vue/types/options" {
+declare module 'vue/types/options' {
   interface ComponentOptions<V extends Vue> {
-    store?: typeof store;
+    store?: typeof store
   }
 }
 
-declare module "vue/types/vue" {
+declare module 'vue/types/vue' {
   interface Vue {
-    $store: typeof store;
+    $store: typeof store
   }
 }
-
 ```
 Then, install as usual.
 ```js
@@ -101,11 +100,10 @@ Then, install as usual.
 import App from './App.vue'
 import store from '@/store'
 
-new Vue({
+const app = new Vue({
   store,
   render: h => h(App)
 })
-
 ```
 
 4. use `mapX`
@@ -114,9 +112,9 @@ new Vue({
 <script>
 import { defineComponent } from 'vue'
 import {
-  mapMutations,
   mapActions,
   mapGetters,
+  mapMutations,
 } from '@/store'
 
 export default defineComponent({
@@ -125,21 +123,21 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters(['username', 'gUsername']),
-    // ^ the param of mapGetters is specific
-  },
-  methods: {
-    ...mapActions(['setName']),
-    // ^ the param of mapActions is specific
-    ...mapMutations(['SET_NAME']),
-    // ^ the param of mapMutations is specific
+    //                ^ the param of mapGetters is specific
   },
   created() {
     console.log(this.username)
-                  //   ^ this `username` is `string`
+    //                ^ this `username` is `string`
     this.setName(1)
-            //   ^ the type of param is `number`
+    //       ^ the type of param is `number`
     this.SET_NAME('Tom')
-          //   ^ the type of param is `string`
+    //       ^ the type of param is `string`
+  },
+  methods: {
+    ...mapActions(['setName']),
+    //                 ^ the param of mapActions is specific
+    ...mapMutations(['SET_NAME']),
+    //                  ^ the param of mapMutations is specific
   },
 })
 </script>

@@ -1,4 +1,4 @@
-import { defineModule } from "../../src"
+import { defineModule } from '../../src'
 
 export const countModule = defineModule({
   namespaced: true,
