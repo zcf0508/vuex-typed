@@ -1,0 +1,37 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+deleted file mode 100644
+index 1ea2e51ef14c9f561a5df8622cc688418077fd0f..0000000000000000000000000000000000000000
+diff --git a/types/vue.d.ts b/types/vue.d.ts
+index 302fc4eb6f1a21430850568d5af08be0ad266ab1..c91449923faca02bee526b5fd053f0cada9338ac 100644
+--- a/types/vue.d.ts
++++ b/types/vue.d.ts
+@@ -2,17 +2,17 @@
+  * Extends interfaces in Vue.js
+  */
+ 
+-import Vue, { ComponentOptions } from "vue";
+-import { Store } from "./index";
++// import Vue, { ComponentOptions } from "vue";
++// import { Store } from "./index";
+ 
+-declare module "vue/types/options" {
+-  interface ComponentOptions<V extends Vue> {
+-    store?: Store<any>;
+-  }
+-}
++// declare module "vue/types/options" {
++//   interface ComponentOptions<V extends Vue> {
++//     store?: Store<any>;
++//   }
++// }
+ 
+-declare module "vue/types/vue" {
+-  interface Vue {
+-    $store: Store<any>;
+-  }
+-}
++// declare module "vue/types/vue" {
++//   interface Vue {
++//     $store: Store<any>;
++//   }
++// }
