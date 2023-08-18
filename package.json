@@ -1,7 +1,7 @@
 {
   "name": "z-vuex-typed",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "packageManager": "pnpm@7.33.6",
   "description": "",
   "author": "zcf0508 <zcf0508@live.com>",
@@ -13,7 +13,10 @@
     "url": "git+https://github.com/zcf0508/vuex-typed.git"
   },
   "bugs": "https://github.com/zcf0508/vuex-typed/issues",
-  "keywords": ["vuex", "typescript"],
+  "keywords": [
+    "vuex",
+    "typescript"
+  ],
   "sideEffects": false,
   "exports": {
     ".": {
