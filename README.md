@@ -26,10 +26,7 @@ const userModule = defineModule({
     },
   },
   actions: {
-    /**
-     * @param {number} payload
-     */
-    async setName({ commit }, payload) {
+    async setName({ commit }, /** @type {string} */ payload) {
       commit('SET_NAME', await getUserById(payload))
       //  ^ commit type and `payload` type are specific
     },
