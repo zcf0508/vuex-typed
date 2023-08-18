@@ -1,8 +1,44 @@
-import { describe, expect, it } from 'vitest'
+import { assertType, describe, expect, it } from 'vitest'
 import Vuex from 'vuex'
 import Vue from 'vue'
 import { defineStore } from '../src'
-import { storeOptions } from './index'
+import { userModule } from './modules/user'
+import { countModule } from './modules/count'
+
+const { store, mapGetters, mapMutations, mapActions } = defineStore({
+  state: {
+    gUsername: '123',
+  },
+  modules: {
+    user: userModule,
+    count: countModule,
+  },
+  mutations: {
+    SET_G_USERNAME(state, payload: string) {
+      state.gUsername = payload
+    },
+  },
+  actions: {
+    setGUsername({ commit }, payload: string) {
+      commit('SET_G_USERNAME', payload)
+    },
+  },
+  getters: {
+    gUsername: state => state.gUsername,
+  },
+})
+
+declare module 'vue/types/options' {
+  interface ComponentOptions<V extends Vue> {
+    store?: typeof store
+  }
+}
+
+declare module 'vue/types/vue' {
+  interface Vue {
+    $store: typeof store
+  }
+}
 
 describe('vuex', () => {
   it('test defineStore', () => {
@@ -46,6 +82,9 @@ describe('vuex', () => {
       },
     })
 
+    assertType<string>(testStore2.getters.testName)
+    assertType<string>(testStore2.state.name)
+
     expect(testStore1.state.name).toBe(testStore2.state.name)
     expect(testStore1.getters.testName).toBe(testStore2.getters.testName)
 
@@ -59,8 +98,6 @@ describe('vuex', () => {
   })
 
   it('test mapGetters', () => {
-    const { store, mapGetters } = defineStore(storeOptions)
-
     const vm = new Vue({
       store,
       computed: {
@@ -71,14 +108,16 @@ describe('vuex', () => {
       },
     })
 
+    assertType<string>(vm.username)
+    assertType<string>(vm.gUsername)
+    assertType<number>(vm.double)
+
     expect(vm.username).toBe('123123')
     expect(vm.gUsername).toBe('123')
     expect(vm.double).toBe(2)
   })
 
   it('test mapMutations', () => {
-    const { store, mapGetters, mapMutations } = defineStore(storeOptions)
-
     const vm = new Vue({
       store,
       computed: {
@@ -95,6 +134,13 @@ describe('vuex', () => {
       },
     })
 
+    assertType<string>(vm.username)
+    assertType<string>(vm.gUsername)
+    assertType<number>(vm.double)
+    assertType<(p: string) => any>(vm.SET_NAME)
+    assertType<(p: number) => any>(vm.SET_NUM)
+    assertType<(p: string) => any>(vm.SET_G_USERNAME)
+
     vm.SET_NAME('222')
     expect(vm.username).toBe('222')
 
@@ -109,8 +155,6 @@ describe('vuex', () => {
   })
 
   it('test mapActions', () => {
-    const { store, mapActions, mapGetters, mapMutations } = defineStore(storeOptions)
-
     const vm = new Vue({
       store,
       computed: {
@@ -130,8 +174,13 @@ describe('vuex', () => {
       },
     })
 
-    // @ts-expect-error
-    vm.setName(1)
+    assertType<string>(vm.username)
+    assertType<string>(vm.gUsername)
+    assertType<number>(vm.double)
+    assertType<(p: string) => any>(vm.setName)
+    assertType<(p: string) => any>(vm.setGUsername)
+    assertType<(p: number) => any>(vm.SET_NUM)
+    assertType<(p: number) => any>(vm.add)
 
     vm.setName('333')
     expect(vm.username).toBe('333')

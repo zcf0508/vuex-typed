@@ -3,6 +3,7 @@ import Vuex, {
   mapGetters as _mapGetters,
   mapMutations as _mapMutations,
 } from 'vuex'
+import type { Store as VuexStore } from 'vuex'
 import Vue from 'vue'
 import type { ComputedGetter } from 'vue'
 
@@ -40,8 +41,7 @@ interface NSModule<S, MS, AS, GS, MDS> {
  * 用于定义 Module 的方法
  */
 export function defineModule<
-  S, MS, AS, GS,
-  NS extends boolean = false,
+  S, MS, AS, GS, NS extends boolean = false,
 >(options: {
   namespaced?: NS
   state: S
@@ -128,8 +128,10 @@ type FlattenActions<T extends Record<string, Module<any, any, any, any> | NSModu
 interface Store<
   /** modeuls */ MS, RS, MUS, AS, GS,
 > {
-  store: {
-    state: { [K in keyof MS]: MS[K] extends Module<any, any, any, any> | NSModule<any, any, any, any, any> ? MS[K]['state'] : never } & RS
+  store: Omit<InstanceType<typeof VuexStore<
+    { [K in keyof MS]: MS[K] extends Module<any, any, any, any> | NSModule<any, any, any, any, any> ? MS[K]['state'] : never } & RS
+  >>, 'state' | 'commit' | 'dispatch' | 'getters'> & ({
+    state: { [K in keyof MS]: MS[K] extends Module<any, any, any, any> | NSModule<any, any, any, any, any> ? MS[K]['state'] : never } & { [K in keyof RS]: RS[K] }
     /** mutations */
     commit: (MS[keyof MS] extends Module<any, any, any, any> | NSModule<any, any, any, any, any>
       ? ({
@@ -182,21 +184,13 @@ interface Store<
                     : never
               >[K]
         }
-      : never) & {
-      [K in keyof GS]: GS[K]
-    }
-  }
+      : never) & GS
+  })
   mapMutations:
   // 1. without namespace
   (<
       /** keys of root mutaions */
-      T extends keyof MUS,
-      /** keys of modules */
-      MSK extends keyof MS,
-      /** module */
-      M extends (MS[MSK] extends (Module<any, any, any, any> | NSModule<any, any, any, any, any>) ? MS[MSK] : never),
-      /** keys of module's mutaions */
-      MKS extends keyof (M extends Module<any, any, any, any> ? M['mutations'] : never),
+      T extends keyof MUS, MSK extends keyof MS, M extends (MS[MSK] extends (Module<any, any, any, any> | NSModule<any, any, any, any, any>) ? MS[MSK] : never), MKS extends keyof (M extends Module<any, any, any, any> ? M['mutations'] : never),
     >(map: (MKS | T)[]) => {
       [K in MKS]: K extends keyof MUS ? never : (payload: Parameters<
         M extends Module<any, any, any, any> ? M['mutations'][K] : never
@@ -207,9 +201,7 @@ interface Store<
   // 2.with namespace
   & (<
       /** keys of modules */
-      T extends keyof MS,
-      /** type of map */
-      KMAP extends Record<string, keyof (MS[T] extends NSModule<any, any, any, any, any> ? MS[T]['mutations'] : never)>,
+      T extends keyof MS, KMAP extends Record<string, keyof (MS[T] extends NSModule<any, any, any, any, any> ? MS[T]['mutations'] : never)>,
     >(namespace: T, map: KMAP) => {
       [K in keyof KMAP]: (payload: Parameters<MS[T] extends NSModule<any, any, any, any, any> ? MS[T]['mutations'][KMAP[K]] extends (...args: any) => any ? MS[T]['mutations'][KMAP[K]] : never : never>[1]) => void
     })
@@ -217,24 +209,16 @@ interface Store<
   // 1.without namespace
   (<
       /** keys of root getters */
-      T extends keyof GS,
-      /** keys of modules */
-      MSK extends keyof MS,
-      /** module */
-      M extends (MS[MSK] extends (Module<any, any, any, any> | NSModule<any, any, any, any, any>) ? MS[MSK] : never),
-      /** keys of module's getters */
-      GKS extends keyof (M extends Module<any, any, any, any> ? M['getters'] : never),
+      T extends keyof GS, MSK extends keyof MS, M extends (MS[MSK] extends (Module<any, any, any, any> | NSModule<any, any, any, any, any>) ? MS[MSK] : never), GKS extends keyof (M extends Module<any, any, any, any> ? M['getters'] : never),
     >(map: (GKS | T)[]) => {
       [K in GKS]: ComputedGetter<ReturnType<K extends keyof GS ? never : M extends Module<any, any, any, any> ? M['getters'][K] : never>>
     } & {
-      [T in keyof GS]: ComputedGetter<ReturnType<GS[T] extends (...args: any) => any ? GS[T] : never>>
+      [T in keyof GS]: ComputedGetter<GS[T]>
     })
   // 2.with namespace
   & (<
       /** keys of modules */
-      T extends keyof MS,
-      /** type of map */
-      KMAP extends Record<string, keyof (MS[T] extends NSModule<any, any, any, any, any> ? MS[T]['getters'] : never)>,
+      T extends keyof MS, KMAP extends Record<string, keyof (MS[T] extends NSModule<any, any, any, any, any> ? MS[T]['getters'] : never)>,
     >(namespace: T, map: KMAP) => {
       [K in keyof KMAP]: ComputedGetter<ReturnType<MS[T] extends NSModule<any, any, any, any, any> ? MS[T]['getters'][KMAP[K]] : never>>
     })
@@ -242,15 +226,9 @@ interface Store<
   // 1. without namespace
   (<
       /** keys of root actions */
-      T extends keyof AS,
-      /** keys of modules */
-      MSK extends keyof MS,
-      /** module */
-      M extends (MS[MSK] extends (Module<any, any, any, any> | NSModule<any, any, any, any, any>) ? MS[MSK] : never),
-      /** keys of module's actions */
-      AKS extends keyof (M extends Module<any, any, any, any> ? M['actions'] : never),
+      T extends keyof AS, MSK extends keyof MS, M extends (MS[MSK] extends (Module<any, any, any, any> | NSModule<any, any, any, any, any>) ? MS[MSK] : never), AKS extends keyof (M extends Module<any, any, any, any> ? M['actions'] : never),
     >(map: (AKS | T)[]) => {
-      [K in AKS]: K extends keyof MUS ? never : (payload: Parameters<
+      [K in AKS]: (payload: Parameters<
         M extends Module<any, any, any, any> ? M['actions'][K] : never
       >[1]) => void
     } & {
@@ -259,9 +237,7 @@ interface Store<
   // 2. with namespace
   & (<
       /** keys of modules */
-      T extends keyof MS,
-      /** type of map */
-      KMAP extends Record<string, keyof (MS[T] extends NSModule<any, any, any, any, any> ? MS[T]['actions'] : never)>,
+      T extends keyof MS, KMAP extends Record<string, keyof (MS[T] extends NSModule<any, any, any, any, any> ? MS[T]['actions'] : never)>,
     >(namespace: T, map: KMAP) => {
       [K in keyof KMAP]: (payload: Parameters<MS[T] extends NSModule<any, any, any, any, any> ? MS[T]['actions'][KMAP[K]] extends (...args: any) => any ? MS[T]['actions'][KMAP[K]] : never : never>[1]) => void
     })
@@ -271,7 +247,7 @@ interface Store<
 * 定义 Store 的方法
 */
 export function defineStore<
-  /** modeuls */ MS, RS, MUS, AS, GS,
+  /** modeuls */ MS, RS extends Record<string, any>, MUS, AS, GS,
 >(options: {
   modules?: { [K in keyof MS]:
     MS[K] extends Module<any, any, any, any> | NSModule<any, any, any, any, any>

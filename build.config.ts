@@ -8,7 +8,11 @@ export default defineBuildConfig({
   clean: true,
   rollup: {
     emitCJS: true,
+    dts: {
+      respectExternal: false,
+    },
   },
   externals: ['vue'],
+  dependencies: ['vuex'],
   failOnWarn: false,
 })

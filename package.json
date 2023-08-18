@@ -34,7 +34,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "engines": {
     "node": ">= 14.0.0"
