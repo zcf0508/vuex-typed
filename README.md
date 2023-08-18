@@ -4,6 +4,14 @@
 
 This is a typed vuex@3.
 
+## Install
+Since this project overrides the default type of vuex, you need to take it easy and uninstall vuex. 
+
+```bash
+npm uninstall vuex
+npm install z-vuex-typed
+```
+
 ## Usage
 
 1. add a `defineModule` function to get type of module
