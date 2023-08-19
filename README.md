@@ -148,6 +148,12 @@ export default defineComponent({
 </script>
 ```
 
+## Sponsor Me
+
+If you like this project, please consider to sponsor me. I will keep working on this project and add more features.
+
+![sponsor](./images/sponsor.png)
+
 ## License
 
 [MIT](./LICENSE) License © 2023
