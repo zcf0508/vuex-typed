@@ -85,7 +85,7 @@ First, **change store type declare** .
 ```ts
 // src/shims-vuex.d.ts
 import Vue, { ComponentOptions } from 'vue'
-import { store } from '@/store'
+import store from '@/store'
 
 declare module 'vue/types/options' {
   interface ComponentOptions<V extends Vue> {

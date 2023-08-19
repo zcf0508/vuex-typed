@@ -102,18 +102,26 @@ describe('vuex', () => {
       store,
       computed: {
         ...mapGetters(['username', 'gUsername']),
-        ...mapGetters('count', {
-          double: 'double',
+        ...mapGetters({
+          newGUsername: 'gUsername',
         }),
+        ...mapGetters('count', {
+          newDouble: 'double',
+        }),
+        ...mapGetters('count', ['double']),
       },
     })
 
     assertType<string>(vm.username)
+    assertType<string>(vm.newGUsername)
     assertType<string>(vm.gUsername)
+    assertType<number>(vm.newDouble)
     assertType<number>(vm.double)
 
     expect(vm.username).toBe('123123')
+    expect(vm.newGUsername).toBe('123')
     expect(vm.gUsername).toBe('123')
+    expect(vm.newDouble).toBe(2)
     expect(vm.double).toBe(2)
   })
 
@@ -128,9 +136,13 @@ describe('vuex', () => {
       },
       methods: {
         ...mapMutations(['SET_NAME', 'SET_G_USERNAME']),
-        ...mapMutations('count', {
-          SET_NUM: 'SET_NUM',
+        ...mapMutations({
+          NEW_SET_G_USERNAME: 'SET_G_USERNAME',
         }),
+        ...mapMutations('count', {
+          NEW_SET_NUM: 'SET_NUM',
+        }),
+        ...mapMutations('count', ['SET_NUM']),
       },
     })
 
@@ -138,19 +150,20 @@ describe('vuex', () => {
     assertType<string>(vm.gUsername)
     assertType<number>(vm.double)
     assertType<(p: string) => any>(vm.SET_NAME)
-    assertType<(p: number) => any>(vm.SET_NUM)
+    assertType<(p: number) => any>(vm.NEW_SET_NUM)
+    assertType<(p: string) => any>(vm.NEW_SET_G_USERNAME)
     assertType<(p: string) => any>(vm.SET_G_USERNAME)
 
     vm.SET_NAME('222')
     expect(vm.username).toBe('222')
 
-    vm.SET_NUM(222)
+    vm.NEW_SET_NUM(222)
     expect(vm.username).toBe('222')
 
     vm.SET_G_USERNAME('333')
     expect(vm.gUsername).toBe('333')
 
-    vm.SET_NUM(2)
+    vm.NEW_SET_NUM(2)
     expect(vm.double).toBe(4)
   })
 
@@ -159,27 +172,39 @@ describe('vuex', () => {
       store,
       computed: {
         ...mapGetters(['username', 'gUsername']),
-        ...mapGetters('count', {
-          double: 'double',
+        ...mapGetters({
+          newGUsernam: 'gUsername',
         }),
+        ...mapGetters('count', {
+          newDouble: 'double',
+        }),
+        ...mapGetters('count', ['double']),
       },
       methods: {
         ...mapMutations('count', {
           SET_NUM: 'SET_NUM',
         }),
         ...mapActions(['setName', 'setGUsername']),
-        ...mapActions('count', {
-          add: 'add',
+        ...mapActions({
+          newSetGUsername: 'setGUsername',
         }),
+        ...mapActions('count', {
+          newAdd: 'add',
+        }),
+        ...mapActions('count', ['add']),
       },
     })
 
     assertType<string>(vm.username)
     assertType<string>(vm.gUsername)
+    assertType<string>(vm.newGUsernam)
+    assertType<number>(vm.newDouble)
     assertType<number>(vm.double)
     assertType<(p: string) => any>(vm.setName)
     assertType<(p: string) => any>(vm.setGUsername)
+    assertType<(p: string) => any>(vm.newSetGUsername)
     assertType<(p: number) => any>(vm.SET_NUM)
+    assertType<(p: number) => any>(vm.newAdd)
     assertType<(p: number) => any>(vm.add)
 
     vm.setName('333')
@@ -188,9 +213,13 @@ describe('vuex', () => {
     vm.setGUsername('444')
     expect(vm.gUsername).toBe('444')
 
+    vm.newSetGUsername('4445')
+    expect(vm.gUsername).toBe('4445')
+
     vm.SET_NUM(1)
-    vm.add(1)
+    vm.newAdd(1)
     expect(store.state.count.num).toBe(2)
-    expect(vm.double).toBe(4)
+    vm.add(1)
+    expect(vm.double).toBe(6)
   })
 })
