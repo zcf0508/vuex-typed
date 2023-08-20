@@ -4,6 +4,20 @@
 
 This is a typed vuex@3.
 
+## Motive
+
+1. Provide comprehensive type hints
+
+Comprehensive type hints include sufficient type hints for the function parameters of mutations, actions, and getters when defining Modules and Stores. It also includes providing optional values for parameters when using mapX functions, and ensuring that components can correctly identify the types of imported data and methods when using mapX functions within components.
+
+2. Simplify migration process as much as possible
+
+I do not want to introduce too many changes to the original project by incorporating this project. This is why I chose not to use pinia to refactor the project. This project only introduces two new methods, defineModule and defineStore, as wrappers in order to obtain correct type inference.
+
+3. Do not change vuex behavior
+
+This project only covers default vuex types. Even if there are errors in types, it will not cause any abnormal behavior in vuex. This ensures that adding types to vuex will not have any side effects.
+
 ## Install
 Since this project overrides the default type of vuex, you need to take it easy and uninstall vuex. 
 
