@@ -143,7 +143,7 @@ export default defineComponent({
     return {}
   },
   computed: {
-    ...mapState(['gUsername'])
+    ...mapState(['gUsername']),
     ...mapGetters(['username']),
     //                ^ the param of mapGetters is specific
   },
