@@ -2,19 +2,19 @@ import { defineModule } from '../../src'
 
 export const userModule = defineModule({
   state: {
-    name: '123123',
-    age: 18,
+    uname: '123123',
+    uage: 18,
   },
   mutations: {
     SET_AGE(state, age: number) {
-      state.age = age
+      state.uage = age
     },
     SET_NAME(state, payload: string) {
-      state.name = payload
+      state.uname = payload
     },
     SET_USER(state, user: { name: string; age: number }) {
-      state.name = user.name
-      state.age = user.age
+      state.uname = user.name
+      state.uage = user.age
     },
   },
   actions: {
@@ -30,7 +30,7 @@ export const userModule = defineModule({
   },
   getters: {
     username(state) {
-      return state.name
+      return state.uname
     },
     userinfo(state) {
       return state

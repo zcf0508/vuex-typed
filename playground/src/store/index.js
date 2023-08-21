@@ -4,6 +4,7 @@ import userStore from './modules/user'
 
 const {
   store,
+  mapState,
   mapMutations,
   mapActions,
   mapGetters,
@@ -22,6 +23,7 @@ export default store
 export const useStore = () => store
 
 export {
+  mapState,
   mapMutations,
   mapActions,
   mapGetters,

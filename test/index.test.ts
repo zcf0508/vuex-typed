@@ -5,7 +5,7 @@ import { defineStore } from '../src'
 import { userModule } from './modules/user'
 import { countModule } from './modules/count'
 
-const { store, mapGetters, mapMutations, mapActions } = defineStore({
+const { store, mapGetters, mapMutations, mapActions, mapState } = defineStore({
   state: {
     gUsername: '123',
   },
@@ -168,13 +168,14 @@ describe('vuex', () => {
       },
     })
 
-    assertType<{ name: string; age: number }>(vm.userinfo)
+    assertType<unknown>(vm.username)
+    assertType<{ uname: string; uage: number }>(vm.userinfo)
     assertType<string>(vm.newGUsername)
     assertType<string>(vm.gUsername)
     assertType<number>(vm.newDouble)
     assertType<number>(vm.double)
 
-    expect(vm.userinfo.name).toBe('123123')
+    expect(vm.userinfo.uname).toBe('123123')
     expect(vm.newGUsername).toBe('123')
     expect(vm.gUsername).toBe('123')
     expect(vm.newDouble).toBe(2)
@@ -277,5 +278,33 @@ describe('vuex', () => {
     expect(store.state.count.num).toBe(2)
     vm.add(1)
     expect(vm.double).toBe(6)
+  })
+
+  it('test mapState', () => {
+    const vm = new Vue({
+      store,
+      computed: {
+        ...mapState(['uname', 'gUsername']),
+        ...mapState({
+          newGUsername: 'gUsername',
+        }),
+        ...mapState('count', ['num']),
+        ...mapState('count', {
+          newNum: 'num',
+        }),
+      },
+    })
+
+    assertType<undefined>(vm.uname)
+    assertType<string>(vm.newGUsername)
+    assertType<string>(vm.gUsername)
+    assertType<number>(vm.newNum)
+    assertType<number>(vm.num)
+
+    expect(vm.newGUsername).toBe('4445')
+    expect(vm.uname).toBe(undefined)
+    expect(vm.gUsername).toBe('4445')
+    expect(vm.newNum).toBe(3)
+    expect(vm.num).toBe(3)
   })
 })

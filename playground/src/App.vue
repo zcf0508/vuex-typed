@@ -1,9 +1,10 @@
 <script>
-import { mapActions, mapGetters } from '@/store/index'
+import { mapActions, mapGetters, mapState } from '@/store/index'
 
 export default {
   name: 'App',
   computed: {
+    ...mapState(['name']),
     ...mapGetters(['username']),
   },
   methods: {

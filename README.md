@@ -71,7 +71,7 @@ import user from './modules/usre'
 
 const {
   store,
-  // mapState,  <- this is not work for now
+  mapState,
   mapMutations,
   mapActions,
   mapGetters,
@@ -87,6 +87,7 @@ const {
 
 export default store
 export {
+  mapState,
   mapMutations,
   mapActions,
   mapGetters,
@@ -134,6 +135,7 @@ import {
   mapActions,
   mapGetters,
   mapMutations,
+  mapState,
 } from '@/store'
 
 export default defineComponent({
@@ -141,7 +143,8 @@ export default defineComponent({
     return {}
   },
   computed: {
-    ...mapGetters(['username', 'gUsername']),
+    ...mapState(['gUsername'])
+    ...mapGetters(['username']),
     //                ^ the param of mapGetters is specific
   },
   created() {

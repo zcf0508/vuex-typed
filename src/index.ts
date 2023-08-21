@@ -2,6 +2,7 @@ import Vuex, {
   mapActions as _mapActions,
   mapGetters as _mapGetters,
   mapMutations as _mapMutations,
+  mapState as _mapState,
 } from 'vuex'
 import type { Store as VuexStore } from 'vuex'
 import Vue from 'vue'
@@ -270,31 +271,37 @@ interface MapGetters<GETTERS, MODULES> {
   // 1.1 accept a list
   <
     GETTERS_KEYS extends keyof GETTERS,
-    MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_GETTERS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['getters'] : never),
+    MODULES_KEYS extends keyof MODULES,
+    M extends (
+      MODULES[MODULES_KEYS] extends ModuleInstance
+        ? MODULES[MODULES_KEYS]
+        : never
+    ), MODULE_GETTERS_KEYS extends keyof (
+      M extends Module<any, any, any, any>
+        ? M['getters']
+        : never
+    ),
     KEY_ITEM extends MODULE_GETTERS_KEYS | GETTERS_KEYS,
   >(map: KEY_ITEM[]): {
     [K in MODULE_GETTERS_KEYS]: K extends KEY_ITEM ? ComputedGetter<ReturnType<M extends Module<any, any, any, any> ? M['getters'][K] : never>> : never
   } & {
-    [K in GETTERS_KEYS]: K extends GETTERS_KEYS ? ComputedGetter<GETTERS[K]> : never
+    [K in GETTERS_KEYS]: K extends KEY_ITEM ? ComputedGetter<GETTERS[K]> : never
   }
   // 1.2 accept a object
   <
-  /** keys of root getters */
-  GETTERS_KEYS extends keyof GETTERS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_GETTERS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['getters'] : never), MAP extends Record<string, MODULE_GETTERS_KEYS | GETTERS_KEYS>,
->(map: MAP): And<{
-  [K in keyof MAP]: ComputedGetter<ReturnType<MAP[K] extends GETTERS_KEYS ? never : M extends Module<any, any, any, any> ? M['getters'][MAP[K]] : never>>
-}, {
-  [K in keyof MAP]: ComputedGetter<MAP[K] extends GETTERS_KEYS ? GETTERS[MAP[K]] : never>
-}>
+    GETTERS_KEYS extends keyof GETTERS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_GETTERS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['getters'] : never), MAP extends Record<string, MODULE_GETTERS_KEYS | GETTERS_KEYS>,
+  >(map: MAP): And<{
+    [K in keyof MAP]: ComputedGetter<ReturnType<MAP[K] extends GETTERS_KEYS ? never : M extends Module<any, any, any, any> ? M['getters'][MAP[K]] : never>>
+  }, {
+    [K in keyof MAP]: ComputedGetter<MAP[K] extends GETTERS_KEYS ? GETTERS[MAP[K]] : never>
+  }>
   // 2.with namespace
   <
-    /** keys of modules */
     MODULES_KEYS extends keyof MODULES, MAP extends Record<string, keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['getters'] : never)>,
   >(namespace: MODULES_KEYS, map: MAP): {
     [K in keyof MAP]: ComputedGetter<ReturnType<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['getters'][MAP[K]] : never>>
   }
   <
-    /** keys of modules */
     MODULES_KEYS extends keyof MODULES, MAP extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['getters'] : never),
   >(namespace: MODULES_KEYS, map: MAP[]): {
     [K in MAP]: ComputedGetter<ReturnType<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['getters'][K] : never>>
@@ -305,7 +312,6 @@ interface MapMutations<MUTATIONS, MODULES> {
   // 1. without namespace
   // 1.1 accept a object
   <
-    /** keys of root mutaions */
     MUTATIONS_KEYS extends keyof MUTATIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_MUTATIONS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['mutations'] : never), MAP extends Record<string, MODULE_MUTATIONS_KEYS | MUTATIONS_KEYS>,
   >(map: MAP): And<{
     [K in keyof MAP]: MAP[K] extends MODULE_MUTATIONS_KEYS ? (payload: Parameters<
@@ -316,36 +322,32 @@ interface MapMutations<MUTATIONS, MODULES> {
   }>
   // 1.2 accept a list
   <
-  /** keys of root mutaions */
-  MUTATIONS_KEYS extends keyof MUTATIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_MUTATIONS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['mutations'] : never),
-  KEY_ITEM extends MODULE_MUTATIONS_KEYS | MUTATIONS_KEYS,
->(map: KEY_ITEM[]): {
+    MUTATIONS_KEYS extends keyof MUTATIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_MUTATIONS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['mutations'] : never),
+    KEY_ITEM extends MODULE_MUTATIONS_KEYS | MUTATIONS_KEYS,
+  >(map: KEY_ITEM[]): {
     [K in MODULE_MUTATIONS_KEYS]: K extends KEY_ITEM ? (payload: Parameters<
-    M extends Module<any, any, any, any> ? M['mutations'][K] : never
-  >[1]) => void : never
+      M extends Module<any, any, any, any> ? M['mutations'][K] : never
+    >[1]) => void : never
   } & {
     [K in MUTATIONS_KEYS]: K extends KEY_ITEM ? (payload: MUTATIONS[K]) => void : never
   }
-// 2.with namespace
-<
-    /** keys of modules */
+  // 2.with namespace
+  <
     MODULES_KEYS extends keyof MODULES, MAP extends Record<string, keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['mutations'] : never)>,
   >(namespace: MODULES_KEYS, map: MAP): {
     [K in keyof MAP]: (payload: Parameters<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['mutations'][MAP[K]] extends (...args: any) => any ? MODULES[MODULES_KEYS]['mutations'][MAP[K]] : never : never>[1]) => void
   }
-<
-    /** keys of modules */
+  <
     MODULES_KEYS extends keyof MODULES, MAP_ITEM extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['mutations'] : never),
   >(namespace: MODULES_KEYS, map: MAP_ITEM[]): {
-  [K in MAP_ITEM]: (payload: Parameters<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['mutations'][K] extends (...args: any) => any ? MODULES[MODULES_KEYS]['mutations'][K] : never : never>[1]) => void
-}
+    [K in MAP_ITEM]: (payload: Parameters<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['mutations'][K] extends (...args: any) => any ? MODULES[MODULES_KEYS]['mutations'][K] : never : never>[1]) => void
+  }
 }
 
 interface MapActions<ACTIONS, MODULES> {
-// 1. without namespace
-// 1.1 accept a list
-<
-    /** keys of root actions */
+  // 1. without namespace
+  // 1.1 accept a list
+  <
     ACTIONS_KEYS extends keyof ACTIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_ACTIONS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['actions'] : never),
     MAP_ITEM extends MODULE_ACTIONS_KEYS | ACTIONS_KEYS,
   >(map: MAP_ITEM[]): {
@@ -355,30 +357,65 @@ interface MapActions<ACTIONS, MODULES> {
   } & {
     [K in ACTIONS_KEYS]: K extends MAP_ITEM ? (payload: ACTIONS[K]) => void : never
   }
-// 1.2 accept a object
-<
-  /** keys of root mutaions */
-  ACTIONS_KEYS extends keyof ACTIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_ACTIONS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['actions'] : never), MAP extends Record<string, MODULE_ACTIONS_KEYS | ACTIONS_KEYS>,
->(map: MAP): And<{
-  [K in keyof MAP]: MAP[K] extends MODULE_ACTIONS_KEYS ? (payload: Parameters<
-    M extends Module<any, any, any, any> ? M['actions'][MAP[K]] : never
-  >[1]) => void : never
-}, {
-  [K in keyof MAP]: MAP[K] extends ACTIONS_KEYS ? (payload: ACTIONS[MAP[K]]) => void : never
-}>
-// 2. with namespace
-<
-    /** keys of modules */
-    ACTIONS_KEYS extends keyof MODULES, MAP extends Record<string, keyof (MODULES[ACTIONS_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[ACTIONS_KEYS]['actions'] : never)>,
-  >(namespace: ACTIONS_KEYS, map: MAP): {
-  [K in keyof MAP]: (payload: Parameters<MODULES[ACTIONS_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[ACTIONS_KEYS]['actions'][MAP[K]] extends (...args: any) => any ? MODULES[ACTIONS_KEYS]['actions'][MAP[K]] : never : never>[1]) => void
+  // 1.2 accept a object
+  <
+    ACTIONS_KEYS extends keyof ACTIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_ACTIONS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['actions'] : never), MAP extends Record<string, MODULE_ACTIONS_KEYS | ACTIONS_KEYS>,
+  >(map: MAP): And<{
+    [K in keyof MAP]: MAP[K] extends MODULE_ACTIONS_KEYS ? (payload: Parameters<
+      M extends Module<any, any, any, any> ? M['actions'][MAP[K]] : never
+    >[1]) => void : never
+  }, {
+    [K in keyof MAP]: MAP[K] extends ACTIONS_KEYS ? (payload: ACTIONS[MAP[K]]) => void : never
+  }>
+  // 2. with namespace
+  <
+    MODULES_KEYS extends keyof MODULES, MAP extends Record<string, keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['actions'] : never)>,
+  >(namespace: MODULES_KEYS, map: MAP): {
+    [K in keyof MAP]: (payload: Parameters<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['actions'][MAP[K]] extends (...args: any) => any ? MODULES[MODULES_KEYS]['actions'][MAP[K]] : never : never>[1]) => void
+  }
+  <
+    MODULES_KEYS extends keyof MODULES, MAP_ITEM extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['actions'] : never),
+  >(namespace: MODULES_KEYS, map: MAP_ITEM[]): {
+    [K in MAP_ITEM]: (payload: Parameters<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['actions'][K] extends (...args: any) => any ? MODULES[MODULES_KEYS]['actions'][K] : never : never>[1]) => void
+  }
 }
-<
-    /** keys of modules */
-    ACTIONS_KEYS extends keyof MODULES, MAP_ITEM extends keyof (MODULES[ACTIONS_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[ACTIONS_KEYS]['actions'] : never),
-  >(namespace: ACTIONS_KEYS, map: MAP_ITEM[]): {
-  [K in MAP_ITEM]: (payload: Parameters<MODULES[ACTIONS_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[ACTIONS_KEYS]['actions'][K] extends (...args: any) => any ? MODULES[ACTIONS_KEYS]['actions'][K] : never : never>[1]) => void
-}
+
+interface MapState<STATE, MODULES> {
+  // 1.without namespace
+  // 1.1 accept a list
+  <
+    STATE_KEYS extends keyof STATE,
+    MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_STATE_KEYS extends keyof (M extends Module<any, any, any, any> ? M['state'] : never),
+    KEY_ITEM extends (MODULE_STATE_KEYS | STATE_KEYS),
+  >(map: KEY_ITEM[]): {
+    /** vuex not support */
+    [K in MODULE_STATE_KEYS]: K extends KEY_ITEM ? M extends Module<any, any, any, any> ? ComputedGetter<
+      // vuex not support
+      undefined
+      // M['state'][K]
+    > : never : never
+  } & {
+    [K in STATE_KEYS]: K extends KEY_ITEM ? ComputedGetter<STATE[K]> : never
+  }
+  // 1.2 accept a object
+  <
+    STATE_KEYS extends keyof STATE, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_GETTERS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['state'] : never), MAP extends Record<string, MODULE_GETTERS_KEYS | STATE_KEYS>,
+  >(map: MAP): And<{
+    [K in keyof MAP]: ComputedGetter<MAP[K] extends STATE_KEYS ? never : M extends Module<any, any, any, any> ? M['state'][MAP[K]] : never>
+  }, {
+    [K in keyof MAP]: ComputedGetter<MAP[K] extends STATE_KEYS ? STATE[MAP[K]] : never>
+  }>
+  // 2.with namespace
+  <
+    MODULES_KEYS extends keyof MODULES, MAP extends Record<string, keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['state'] : never)>,
+  >(namespace: MODULES_KEYS, map: MAP): {
+    [K in keyof MAP]: ComputedGetter<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['state'][MAP[K]] : never>
+  }
+  <
+    MODULES_KEYS extends keyof MODULES, MAP extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['state'] : never),
+  >(namespace: MODULES_KEYS, map: MAP[]): {
+    [K in MAP]: ComputedGetter<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['state'][K] : never>
+  }
 }
 
 // ---
@@ -398,6 +435,7 @@ interface StoreWrap<
   mapMutations: MapMutations<MUTATIONS, MODULES>
   mapGetters: MapGetters<GETTERS, MODULES>
   mapActions: MapActions<ACTIONS, MODULES>
+  mapState: MapState<ROOTSTATE, MODULES>
 }
 
 /**
@@ -436,6 +474,7 @@ export function defineStore<
   return {
     // @ts-expect-error
     store,
+    mapState: _mapState,
     mapMutations: _mapMutations,
     mapActions: _mapActions,
     mapGetters: _mapGetters,
