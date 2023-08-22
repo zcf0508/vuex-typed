@@ -295,6 +295,7 @@ describe('vuex', () => {
       },
     })
 
+    // vuex not support
     assertType<undefined>(vm.uname)
     assertType<string>(vm.newGUsername)
     assertType<string>(vm.gUsername)

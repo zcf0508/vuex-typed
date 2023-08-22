@@ -63,18 +63,25 @@ export function defineModule<
      * @param payload Pass `undefined` when no parameters are required
      */
     (state: STATE, payload: MUTATIONS[K]) => void }
-  /** not support `rootState` and `rootGetters` */
-  actions?: { [K in keyof ACTIONS]: <
-    DISPATCH extends ModuleDispatch<ACTIONS>,
-    ACTIONGETTERS extends GETTERS,
+  actions?: {
+    /**
+     * @param ctx not support `rootState` and `rootGetters`
+     * @param payload Pass `undefined` when no parameters are required, and
+     */
+    [K in keyof ACTIONS]: <
+      DISPATCH extends ModuleDispatch<ACTIONS>,
+      ACTIONGETTERS extends GETTERS,
     >(ctx: {
       state: STATE
       commit: ModuleCommit<MUTATIONS>
       dispatch: DISPATCH
       getters: ACTIONGETTERS
-    }, payload: ACTIONS[K]) => any }
-  /** not support `rootState` and `rootGetters` */
-  getters?: { [K in keyof GETTERS]: <LGS extends GETTERS>(state: STATE, getters: LGS) => GETTERS[K] }
+    }, payload: ACTIONS[K]) => any
+  }
+  getters?: {
+    /** not support `rootState` and `rootGetters` */
+    [K in keyof GETTERS]: <LGS extends GETTERS>(state: STATE, getters: LGS) => GETTERS[K]
+  }
   // modules?: NS extends true
   //     ? MDS extends Record<string, NSModule<any,any,any,any, any>>
   //         ? MDS
@@ -168,9 +175,10 @@ type StoreState<MODULES, ROOTSTATE> = Readonly<
 >
 
 type StoreCommit<MODULES, MUTATIONS> =
-  & And<(
+  And<(
     MODULES[keyof MODULES] extends ModuleInstance
-      ? ({ <
+      ? ({
+        <
           K extends keyof FlattenMutations<
             MODULES extends Modules ? MODULES : never
           >,
@@ -194,72 +202,55 @@ type StoreCommit<MODULES, MUTATIONS> =
         >[1] : never): void
         })
       : never
-    ), {
-      <T extends keyof MUTATIONS>(type: T, payload: MUTATIONS[T]): void
-      <T extends keyof MUTATIONS>(input: { type: T } & MUTATIONS[T]): void
-    }>
+  ), {
+    <T extends keyof MUTATIONS>(type: T, payload: MUTATIONS[T]): void
+    <T extends keyof MUTATIONS>(input: { type: T } & MUTATIONS[T]): void
+  }>
 
 type StoreDispatch<MODULES, ACTIONS> =
   And<(MODULES[keyof MODULES] extends ModuleInstance
     ? { <
           K extends keyof FlattenActions<
-            MODULES extends Record<string, Module<any, any, any, any> | NSModule<any, any, any, any, any>>
-              ? MODULES
-              : never
+            MODULES extends Modules ? MODULES : never
           >,
         >(type: K, payload: Parameters<
           FlattenActions<
-            MODULES extends Record<string, Module<any, any, any, any> | NSModule<any, any, any, any, any>>
-              ? MODULES
-              : never
+            MODULES extends Modules ? MODULES : never
           >[K] extends (...args: any) => any ? FlattenActions<
-            MODULES extends Record<string, Module<any, any, any, any> | NSModule<any, any, any, any, any>>
-              ? MODULES
-              : never
+            MODULES extends Modules ? MODULES : never
           >[K] : never
         >[1]): Promise<any>
         <
           K extends keyof FlattenActions<
-            MODULES extends Record<string, Module<any, any, any, any> | NSModule<any, any, any, any, any>>
-              ? MODULES
-              : never
+            MODULES extends Modules ? MODULES : never
           >,
         >(input: { type: K } & Parameters<
           FlattenActions<
-            MODULES extends Record<string, Module<any, any, any, any> | NSModule<any, any, any, any, any>>
+            MODULES extends Modules
               ? MODULES
               : never
           >[K] extends (...args: any) => any ? FlattenActions<
-            MODULES extends Record<string, Module<any, any, any, any> | NSModule<any, any, any, any, any>>
+            MODULES extends Modules
               ? MODULES
               : never
           >[K] : never
         >[1]): Promise<any>
       }
     : never)
-  , {
-      <T extends keyof ACTIONS>(type: T, payload: ACTIONS[T]): Promise<any>
-      <T extends keyof ACTIONS>(input: { type: T } & ACTIONS[T]): Promise<any>
-  }>
+    , {
+        <T extends keyof ACTIONS>(type: T, payload: ACTIONS[T]): Promise<any>
+        <T extends keyof ACTIONS>(input: { type: T } & ACTIONS[T]): Promise<any>
+    }>
 
 type StoreGetters<MODULES, GETTERS> =
-  And<(MODULES[keyof MODULES] extends (
-    | Module<any, any, any, any>
-    | NSModule<any, any, any, any, any>
-  ) ? {
-        [K in keyof FlattenGetters<
-          MODULES extends Record<string, (
-            | Module<any, any, any, any>
-            | NSModule<any, any, any, any, any>
-          )> ? MODULES : never
-        >]:
-        FlattenGetters<
-          MODULES extends Record<string, (
-            | Module<any, any, any, any>
-            | NSModule<any, any, any, any, any>
-          )> ? MODULES : never
-        >[K]
-      }
+  And<(MODULES[keyof MODULES] extends ModuleInstance ? {
+    [K in keyof FlattenGetters<
+      MODULES extends Modules ? MODULES : never
+    >]:
+    FlattenGetters<
+      MODULES extends Modules ? MODULES : never
+    >[K]
+  }
     : never),
     { [K in keyof GETTERS]: GETTERS[K] }
   >
@@ -421,7 +412,7 @@ interface MapState<STATE, MODULES> {
 // ---
 
 interface StoreWrap<
-  /** modeuls */ MODULES, ROOTSTATE, MUTATIONS, ACTIONS, GETTERS,
+  MODULES, ROOTSTATE, MUTATIONS, ACTIONS, GETTERS,
 > {
   store: Omit<InstanceType<typeof VuexStore<StoreState<MODULES, ROOTSTATE>>>, 'state' | 'commit' | 'dispatch' | 'getters'> & {
     state: StoreState<MODULES, ROOTSTATE>
@@ -438,11 +429,8 @@ interface StoreWrap<
   mapState: MapState<ROOTSTATE, MODULES>
 }
 
-/**
-* 定义 Store 的方法
-*/
 export function defineStore<
-  /** modeuls */ MODULES, ROOTSTATE extends Record<string, any>, MUTATIONS, ACTIONS, GETTERS,
+  MODULES, ROOTSTATE extends Record<string, any>, MUTATIONS, ACTIONS, GETTERS,
 >(options: {
   modules?: { [K in keyof MODULES]:
     MODULES[K] extends ModuleInstance
@@ -452,18 +440,23 @@ export function defineStore<
   state?: ROOTSTATE
   mutations?: { [K in keyof MUTATIONS]:
     /**
-     * @param payload 不需要参数时请传 undefined
+     * @param payload Pass `undefined` when no parameters are required
      */
     (state: ROOTSTATE, payload: MUTATIONS[K]) => void }
-  actions?: { [K in keyof ACTIONS]: <
-    DISPATCH extends StoreDispatch<MODULES, ACTIONS>,
-    ACTIONGETTERS extends GETTERS,
-  >(ctx: {
+  actions?: {
+    /**
+     * @param payload Pass `undefined` when no parameters are required
+     */
+    [K in keyof ACTIONS]: <
+      DISPATCH extends StoreDispatch<MODULES, ACTIONS>,
+      ACTIONGETTERS extends GETTERS,
+    >(ctx: {
       state: StoreState<MODULES, ROOTSTATE>
       commit: StoreCommit<MODULES, MUTATIONS>
       dispatch: DISPATCH
       getters: ACTIONGETTERS
-    }, payload: ACTIONS[K]) => void }
+    }, payload: ACTIONS[K]) => void
+  }
   getters?: { [K in keyof GETTERS]: (state: StoreState<MODULES, ROOTSTATE>) => GETTERS[K] }
 
 }): StoreWrap<MODULES, ROOTSTATE, MUTATIONS, ACTIONS, GETTERS> {
