@@ -4,7 +4,7 @@ import Vuex, {
   mapMutations as _mapMutations,
   mapState as _mapState,
 } from 'vuex'
-import type { Store as VuexStore } from 'vuex'
+import type { ActionContext, Store as VuexStore } from 'vuex'
 import Vue from 'vue'
 import type { ComputedGetter } from 'vue'
 import type { And } from './utils'
@@ -26,7 +26,7 @@ interface Module<STATE, MUTATIONS, ACTIONS, GETTERS> {
   namespaced: false
   state: STATE
   mutations: { [K in keyof MUTATIONS]: (state: STATE, payload: MUTATIONS[K]) => void }
-  actions: { [K in keyof ACTIONS]: (store: {
+  actions: { [K in keyof ACTIONS]: (injectee: {
     state: STATE
     commit: ModuleCommit<MUTATIONS>
     dispatch: ModuleDispatch<ACTIONS>
@@ -43,7 +43,7 @@ interface NSModule<STATE, MUTATIONS, ACTIONS, GETTERS, MODULES> {
   namespaced: true
   state: STATE
   mutations: { [K in keyof MUTATIONS]: (state: STATE, payload: MUTATIONS[K]) => void }
-  actions: { [K in keyof ACTIONS]: (ctx: {
+  actions: { [K in keyof ACTIONS]: (injectee: {
     state: STATE
     commit: ModuleCommit<MUTATIONS>
     dispatch: ModuleDispatch<ACTIONS>
@@ -71,7 +71,7 @@ export function defineModule<
     [K in keyof ACTIONS]: <
       DISPATCH extends ModuleDispatch<ACTIONS>,
       ACTIONGETTERS extends GETTERS,
-    >(ctx: {
+    >(injectee: Omit<ActionContext<STATE, unknown>, 'state' | 'commit' | 'dispatch' | 'getters'> & {
       state: STATE
       commit: ModuleCommit<MUTATIONS>
       dispatch: DISPATCH
@@ -450,7 +450,7 @@ export function defineStore<
     [K in keyof ACTIONS]: <
       DISPATCH extends StoreDispatch<MODULES, ACTIONS>,
       ACTIONGETTERS extends GETTERS,
-    >(ctx: {
+    >(injectee: Omit<ActionContext<ROOTSTATE, ROOTSTATE>, 'state' | 'commit' | 'dispatch' | 'getters'> & {
       state: StoreState<MODULES, ROOTSTATE>
       commit: StoreCommit<MODULES, MUTATIONS>
       dispatch: DISPATCH
