@@ -48,7 +48,7 @@
     "dev": "unbuild --stub",
     "lint": "eslint .",
     "prepublishOnly": "npm run build",
-    "release": "bumpp && npm publish",
+    "release": "bumpp",
     "start": "esno src/index.ts",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
