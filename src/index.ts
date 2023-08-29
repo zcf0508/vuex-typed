@@ -396,6 +396,11 @@ interface MapState<STATE, MODULES> {
   }, {
     [K in keyof MAP]: ComputedGetter<MAP[K] extends STATE_KEYS ? STATE[MAP[K]] : never>
   }>
+  <
+    MODULES_KEYS extends keyof MODULES, MAP extends Record<string, ((state: STATE & { [K in MODULES_KEYS]: MODULES[K] extends ModuleInstance ? MODULES[K]['state'] : never }) => any)>,
+  >(map: MAP): {
+    [K in keyof MAP]: ComputedGetter<ReturnType<MAP[K]>>
+  }
   // 2.with namespace
   <
     MODULES_KEYS extends keyof MODULES, MAP extends Record<string, keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['state'] : never)>,

@@ -288,6 +288,9 @@ describe('vuex', () => {
         ...mapState({
           newGUsername: 'gUsername',
         }),
+        ...mapState({
+          newUname: state => state.user.uname,
+        }),
         ...mapState('count', ['num']),
         ...mapState('count', {
           newNum: 'num',
@@ -298,12 +301,14 @@ describe('vuex', () => {
     // vuex not support
     assertType<undefined>(vm.uname)
     assertType<string>(vm.newGUsername)
+    assertType<string>(vm.newUname)
     assertType<string>(vm.gUsername)
     assertType<number>(vm.newNum)
     assertType<number>(vm.num)
 
     expect(vm.newGUsername).toBe('4445')
     expect(vm.uname).toBe(undefined)
+    expect(vm.newUname).toBe('333')
     expect(vm.gUsername).toBe('4445')
     expect(vm.newNum).toBe(3)
     expect(vm.num).toBe(3)
