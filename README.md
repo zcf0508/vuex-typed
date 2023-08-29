@@ -19,10 +19,8 @@ I do not want to introduce too many changes to the original project by incorpora
 This project only covers default vuex types. Even if there are errors in types, it will not cause any abnormal behavior in vuex. This ensures that adding types to vuex will not have any side effects.
 
 ## Install
-Since this project overrides the default type of vuex, you need to take it easy and uninstall vuex. 
 
 ```bash
-npm uninstall vuex
 npm install z-vuex-typed
 ```
 
@@ -39,10 +37,7 @@ const userModule = defineModule({
     name: 'John',
   },
   mutaions: {
-    /**
-     * @param {string} payload
-     */
-    SET_NAME(state, payload) {
+    SET_NAME(state, /** @type {string} */payload) {
       //      ^ type of `state` is `{name: string}`
       state.name = payload
     },
