@@ -154,6 +154,7 @@ describe('vuex', () => {
   })
 
   it('test mapGetters', () => {
+    const a = mapGetters(['userinfo', 'gUsername'])
     const vm = new Vue({
       store,
       computed: {
@@ -168,7 +169,8 @@ describe('vuex', () => {
       },
     })
 
-    assertType<unknown>(vm.username)
+    // @ts-expect-error
+    const name = vm.username
     assertType<{ uname: string; uage: number }>(vm.userinfo)
     assertType<string>(vm.newGUsername)
     assertType<string>(vm.gUsername)

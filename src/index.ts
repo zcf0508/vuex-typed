@@ -274,9 +274,11 @@ interface MapGetters<GETTERS, MODULES> {
     ),
     KEY_ITEM extends MODULE_GETTERS_KEYS | GETTERS_KEYS,
   >(map: KEY_ITEM[]): {
-    [K in MODULE_GETTERS_KEYS]: K extends KEY_ITEM ? ComputedGetter<ReturnType<M extends Module<any, any, any, any> ? M['getters'][K] : never>> : never
-  } & {
-    [K in GETTERS_KEYS]: K extends KEY_ITEM ? ComputedGetter<GETTERS[K]> : never
+    [K in KEY_ITEM]:
+    K extends MODULE_GETTERS_KEYS
+      ? ComputedGetter< M extends Module<any, any, any, any> ? ReturnType<M['getters'][K]> : never >
+      : K extends GETTERS_KEYS
+        ? ComputedGetter<GETTERS[K]> : never
   }
   // 1.2 accept a object
   <
@@ -342,11 +344,14 @@ interface MapActions<ACTIONS, MODULES> {
     ACTIONS_KEYS extends keyof ACTIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_ACTIONS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['actions'] : never),
     MAP_ITEM extends MODULE_ACTIONS_KEYS | ACTIONS_KEYS,
   >(map: MAP_ITEM[]): {
-    [K in MODULE_ACTIONS_KEYS]: K extends MAP_ITEM ? (payload: Parameters<
-      M extends Module<any, any, any, any> ? M['actions'][K] : never
-    >[1]) => void : never
-  } & {
-    [K in ACTIONS_KEYS]: K extends MAP_ITEM ? (payload: ACTIONS[K]) => void : never
+    [K in MAP_ITEM]:
+    K extends MODULE_ACTIONS_KEYS
+      ? (payload: Parameters<
+        M extends Module<any, any, any, any> ? M['actions'][K] : never
+      >[1]) => void
+      : K extends ACTIONS_KEYS
+        ? (payload: ACTIONS[K]) => void
+        : never
   }
   // 1.2 accept a object
   <
@@ -380,13 +385,17 @@ interface MapState<STATE, MODULES> {
     KEY_ITEM extends (MODULE_STATE_KEYS | STATE_KEYS),
   >(map: KEY_ITEM[]): {
     /** vuex not support */
-    [K in MODULE_STATE_KEYS]: K extends KEY_ITEM ? M extends Module<any, any, any, any> ? ComputedGetter<
-      // vuex not support
-      undefined
-      // M['state'][K]
-    > : never : never
-  } & {
-    [K in STATE_KEYS]: K extends KEY_ITEM ? ComputedGetter<STATE[K]> : never
+    [K in KEY_ITEM]:
+    K extends MODULE_STATE_KEYS
+      ? ComputedGetter<
+      M extends Module<any, any, any, any>
+        // vuex not support
+        ? undefined
+        // M['state'][K]
+        : never>
+      : K extends STATE_KEYS
+        ? ComputedGetter<STATE[K]>
+        : never
   }
   // 1.2 accept a object
   <
