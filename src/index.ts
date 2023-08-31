@@ -69,8 +69,7 @@ export function defineModule<
      * @param payload Pass `undefined` when no parameters are required, and
      */
     [K in keyof ACTIONS]: <
-      DISPATCH extends ModuleDispatch<ACTIONS>,
-      ACTIONGETTERS extends GETTERS,
+      DISPATCH extends ModuleDispatch<ACTIONS>, ACTIONGETTERS extends GETTERS,
     >(injectee: Omit<ActionContext<STATE, unknown>, 'state' | 'commit' | 'dispatch' | 'getters'> & {
       state: STATE
       commit: ModuleCommit<MUTATIONS>
@@ -260,9 +259,7 @@ interface MapGetters<GETTERS, MODULES> {
   // 1.without namespace
   // 1.1 accept a list
   <
-    GETTERS_KEYS extends keyof GETTERS,
-    MODULES_KEYS extends keyof MODULES,
-    M extends (
+    GETTERS_KEYS extends keyof GETTERS, MODULES_KEYS extends keyof MODULES, M extends (
       MODULES[MODULES_KEYS] extends ModuleInstance
         ? MODULES[MODULES_KEYS]
         : never
@@ -270,8 +267,7 @@ interface MapGetters<GETTERS, MODULES> {
       M extends Module<any, any, any, any>
         ? M['getters']
         : never
-    ),
-    KEY_ITEM extends MODULE_GETTERS_KEYS | GETTERS_KEYS,
+    ), KEY_ITEM extends MODULE_GETTERS_KEYS | GETTERS_KEYS,
   >(map: KEY_ITEM[]): {
     [K in KEY_ITEM]:
     K extends MODULE_GETTERS_KEYS
@@ -314,8 +310,7 @@ interface MapMutations<MUTATIONS, MODULES> {
   }>
   // 1.2 accept a list
   <
-    MUTATIONS_KEYS extends keyof MUTATIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_MUTATIONS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['mutations'] : never),
-    KEY_ITEM extends MODULE_MUTATIONS_KEYS | MUTATIONS_KEYS,
+    MUTATIONS_KEYS extends keyof MUTATIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_MUTATIONS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['mutations'] : never), KEY_ITEM extends MODULE_MUTATIONS_KEYS | MUTATIONS_KEYS,
   >(map: KEY_ITEM[]): {
     [K in MODULE_MUTATIONS_KEYS]: K extends KEY_ITEM ? (payload: Parameters<
       M extends Module<any, any, any, any> ? M['mutations'][K] : never
@@ -340,8 +335,7 @@ interface MapActions<ACTIONS, MODULES> {
   // 1. without namespace
   // 1.1 accept a list
   <
-    ACTIONS_KEYS extends keyof ACTIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_ACTIONS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['actions'] : never),
-    MAP_ITEM extends MODULE_ACTIONS_KEYS | ACTIONS_KEYS,
+    ACTIONS_KEYS extends keyof ACTIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_ACTIONS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['actions'] : never), MAP_ITEM extends MODULE_ACTIONS_KEYS | ACTIONS_KEYS,
   >(map: MAP_ITEM[]): {
     [K in MAP_ITEM]:
     K extends MODULE_ACTIONS_KEYS
@@ -379,9 +373,7 @@ interface MapState<STATE, MODULES> {
   // 1.without namespace
   // 1.1 accept a list
   <
-    STATE_KEYS extends keyof STATE,
-    MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_STATE_KEYS extends keyof (M extends Module<any, any, any, any> ? M['state'] : never),
-    KEY_ITEM extends (MODULE_STATE_KEYS | STATE_KEYS),
+    STATE_KEYS extends keyof STATE, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_STATE_KEYS extends keyof (M extends Module<any, any, any, any> ? M['state'] : never), KEY_ITEM extends (MODULE_STATE_KEYS | STATE_KEYS),
   >(map: KEY_ITEM[]): {
     /** vuex not support */
     [K in KEY_ITEM]:
@@ -466,8 +458,7 @@ export function defineStore<
      * @param payload Pass `undefined` when no parameters are required
      */
     [K in keyof ACTIONS]: <
-      DISPATCH extends StoreDispatch<MODULES, ACTIONS>,
-      ACTIONGETTERS extends GETTERS,
+      DISPATCH extends StoreDispatch<MODULES, ACTIONS>, ACTIONGETTERS extends GETTERS,
     >(injectee: Omit<ActionContext<ROOTSTATE, ROOTSTATE>, 'state' | 'commit' | 'dispatch' | 'getters'> & {
       state: StoreState<MODULES, ROOTSTATE>
       commit: StoreCommit<MODULES, MUTATIONS>

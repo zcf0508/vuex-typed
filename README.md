@@ -60,15 +60,43 @@ export default userModule
 2. add a `defineStore` function to hook the types of `store` and `mapX` functions.
 
 ```js
+// vue2
 // src/store/index.js
+import Vue from 'vue'
 import { defineStore } from 'z-vuex-typed'
 import user from './modules/usre'
 
-// if you are using vue2, you need add follow lines
-// import Vue from 'vue'
-// import Vuex from 'vuex'
-// Vue.use(Vuex)
-//
+const {
+  store,
+  mapState,
+  mapMutations,
+  mapActions,
+  mapGetters,
+} = defineStore({
+  modules: {
+    user
+  },
+  getters: {
+    gUsername: state => state.user.name
+    //  ^  type of state is specific
+  }
+}, Vue)
+//  ^ need pass Vue instance to `defineStore` function
+
+export default store
+export {
+  mapState,
+  mapMutations,
+  mapActions,
+  mapGetters,
+}
+```
+
+```js
+// vue3
+// src/store/index.js
+import { defineStore } from 'z-vuex-typed'
+import user from './modules/usre'
 
 const {
   store,
