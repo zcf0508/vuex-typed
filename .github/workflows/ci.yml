@@ -58,8 +58,8 @@ jobs:
       - name: Install
         run: pnpm install
 
-      - name: Install
+      - name: Build
         run: pnpm build
 
-      - name: Build
+      - name: Test
         run: bash ./runtest.sh

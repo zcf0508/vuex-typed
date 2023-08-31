@@ -5,8 +5,6 @@ import { defineStore } from '../src'
 import { userModule } from './modules/user'
 import { countModule } from './modules/count'
 
-import '@vue/runtime-core'
-
 const { store, mapGetters, mapMutations, mapActions, mapState } = defineStore({
   state: {
     gUsername: '123',

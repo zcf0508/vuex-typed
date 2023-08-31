@@ -72,7 +72,7 @@
     "vite": "^4.4.7",
     "vitest": "^0.33.0",
     "vue": "^3.0.2",
-    "vuex": "4"
+    "vuex": "4.0.0"
   },
   "pnpm": {
     "patchedDependencies": {
