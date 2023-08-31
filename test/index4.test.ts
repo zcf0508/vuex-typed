@@ -118,32 +118,32 @@ describe('vuex', () => {
       modules: {
         m1: defineModule({
           namespaced: true,
-          state: {a: '1'},
+          state: { a: '1' },
           mutations: {
             UPDATE(state, payload: string) {
               state.a = payload
-            }
+            },
           },
           actions: {
-            update({commit}) {
+            update({ commit }) {
               commit('UPDATE', '2')
-            }
-          }
+            },
+          },
         }),
         m2: defineModule({
-          state: {a: '1'},
+          state: { a: '1' },
           mutations: {
             UPDATE(state, payload: string) {
               state.a = payload
-            }
+            },
           },
           actions: {
-            update2({commit}) {
+            update2({ commit }) {
               commit('UPDATE', '2')
-            }
-          }
-        })
-      }
+            },
+          },
+        }),
+      },
     })
 
     assertType<string>(testStore2.getters.username)

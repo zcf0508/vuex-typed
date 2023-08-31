@@ -83,7 +83,7 @@ describe('vuex', () => {
     }
     Vue.use(Vuex)
     const testStore1 = new Vuex.Store(testStore1Options)
-    
+
     const newStore = defineStore({
       state: {
         name: '123123',
@@ -123,32 +123,32 @@ describe('vuex', () => {
       modules: {
         m1: defineModule({
           namespaced: true,
-          state: {a: '1'},
+          state: { a: '1' },
           mutations: {
             UPDATE(state, payload: string) {
               state.a = payload
-            }
+            },
           },
           actions: {
-            update({commit}) {
+            update({ commit }) {
               commit('UPDATE', '2')
-            }
-          }
+            },
+          },
         }),
         m2: defineModule({
-          state: {a: '1'},
+          state: { a: '1' },
           mutations: {
             UPDATE(state, payload: string) {
               state.a = payload
-            }
+            },
           },
           actions: {
-            update2({commit}) {
+            update2({ commit }) {
               commit('UPDATE', '2')
-            }
-          }
-        })
-      }
+            },
+          },
+        }),
+      },
     })
 
     const testStore2 = newStore.store
@@ -174,7 +174,6 @@ describe('vuex', () => {
     expect(testStore2.getters.username).toBe('333')
 
     testStore2.commit('SET_NAME', '222')
-
 
     testStore2.dispatch('setName', '333')
     testStore2.dispatch('m1/update', '2')

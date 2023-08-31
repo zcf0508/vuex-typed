@@ -239,10 +239,10 @@ type StoreDispatch<MODULES, ACTIONS> =
         >[1]): Promise<any>
       }
     : never)
-    & {
+  & {
         <T extends keyof ACTIONS>(type: T, payload: ACTIONS[T]): Promise<any>
         <T extends keyof ACTIONS>(input: { type: T } & ACTIONS[T]): Promise<any>
-    }
+  }
 
 type StoreGetters<MODULES, GETTERS> =
   (MODULES[keyof MODULES] extends ModuleInstance ? {
@@ -480,7 +480,6 @@ export function defineStore<
   getters?: { [K in keyof GETTERS]: (state: StoreState<MODULES, ROOTSTATE>) => GETTERS[K] }
 
 }): StoreWrap<MODULES, ROOTSTATE, MUTATIONS, ACTIONS, GETTERS> {
-
   // @ts-ignore
   const store = IS_VUEX_3 ? new Vuex.Store(options) : Vuex.createStore(options)
 
