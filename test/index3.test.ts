@@ -5,8 +5,6 @@ import { defineModule, defineStore } from '../src'
 import { userModule } from './modules/user'
 import { countModule } from './modules/count'
 
-Vue.use(Vuex)
-
 const { store, mapGetters, mapMutations, mapActions, mapState } = defineStore({
   state: {
     gUsername: '123',
@@ -28,7 +26,7 @@ const { store, mapGetters, mapMutations, mapActions, mapState } = defineStore({
   getters: {
     gUsername: state => state.gUsername,
   },
-})
+}, Vue)
 
 declare module 'vue/types/options' {
   interface ComponentOptions<V extends Vue> {
@@ -149,7 +147,7 @@ describe('vuex', () => {
           },
         }),
       },
-    })
+    }, Vue)
 
     const testStore2 = newStore.store
 

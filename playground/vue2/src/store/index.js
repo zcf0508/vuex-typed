@@ -1,11 +1,8 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
 
 import { defineStore } from 'z-vuex-typed'
 
 import userStore from './modules/user'
-
-Vue.use(Vuex)
 
 const {
   store,
@@ -21,7 +18,7 @@ const {
     username: state => state.user.name,
     userage: state => state.user.age,
   },
-})
+}, Vue)
 
 export default store
 

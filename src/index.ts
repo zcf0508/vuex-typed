@@ -9,8 +9,6 @@ import type { ComputedGetter } from 'vue'
 import type { And } from './utils'
 import { IS_VUEX_3 } from './helper'
 
-// type ComputedGetter<T> = (...args: any[]) => T
-
 interface ModuleCommit<MUTATIONS> {
   <T extends keyof MUTATIONS>(type: T, payload: MUTATIONS[T]): void
   <T extends keyof MUTATIONS>(input: { type: T } & MUTATIONS[T]): void
@@ -479,7 +477,10 @@ export function defineStore<
   }
   getters?: { [K in keyof GETTERS]: (state: StoreState<MODULES, ROOTSTATE>) => GETTERS[K] }
 
-}): StoreWrap<MODULES, ROOTSTATE, MUTATIONS, ACTIONS, GETTERS> {
+}, /** only vue2 use */_Vue?: any): StoreWrap<MODULES, ROOTSTATE, MUTATIONS, ACTIONS, GETTERS> {
+  if (_Vue && IS_VUEX_3)
+    _Vue.use(Vuex)
+
   // @ts-ignore
   const store = IS_VUEX_3 ? new Vuex.Store(options) : Vuex.createStore(options)
 
