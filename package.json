@@ -55,6 +55,10 @@
     "typecheck": "tsc --noEmit",
     "play": "npm -C playground/vue2 run dev"
   },
+  "peerDependencies": {
+    "vue": ">=2.0.0",
+    "vuex": ">=3.0.0"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.8",
     "@antfu/ni": "^0.21.5",
