@@ -1,6 +1,11 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+
 import { defineStore } from 'z-vuex-typed'
 
 import userStore from './modules/user'
+
+Vue.use(Vuex)
 
 const {
   store,

@@ -2,7 +2,7 @@
 
 [![NPM version](https://img.shields.io/npm/v/z-vuex-typed?color=a1b858&label=)](https://www.npmjs.com/package/z-vuex-typed)
 
-This is a typed vuex@3.
+This is a typed vuex.
 
 ## Motive
 
@@ -64,6 +64,12 @@ export default userModule
 import { defineStore } from 'z-vuex-typed'
 import user from './modules/usre'
 
+// if you are using vue2, you need add follow lines
+// import Vue from 'vue'
+// import Vuex from 'vuex'
+// Vue.use(Vuex)
+//
+
 const {
   store,
   mapState,
@@ -88,11 +94,13 @@ export {
   mapGetters,
 }
 ```
+
 3. install the `store`
 
 First, **change store type declare** .
 
 ```ts
+// vue2
 // src/shims-vuex.d.ts
 import Vue, { ComponentOptions } from 'vue'
 import store from '@/store'
@@ -109,8 +117,27 @@ declare module 'vue/types/vue' {
   }
 }
 ```
+
+```ts
+// vue3
+// src/shims-vuex.d.ts
+import { ComponentCustomOptions, ComponentCustomProperties } from 'vue'
+import store from '@/store'
+
+declare module '@vue/runtime-core' {
+  interface ComponentCustomOptions {
+    store?: typeof store
+  }
+  interface ComponentCustomProperties {
+    $store: typeof store
+  }
+}
+```
+
 Then, install as usual.
+
 ```js
+// vue2
 // main.js
 import App from './App.vue'
 import store from '@/store'
@@ -119,6 +146,16 @@ const app = new Vue({
   store,
   render: h => h(App)
 })
+```
+
+```js
+// vue3
+// main.js
+import App from './App.vue'
+import store from '@/store'
+
+const app = createApp(App)
+app.use(store)
 ```
 
 4. use `mapX`
@@ -131,9 +168,13 @@ import {
   mapGetters,
   mapMutations,
   mapState,
+  useStore,
 } from '@/store'
 
 export default defineComponent({
+  setup() {
+    const store = useStore()
+  },
   data() {
     return {}
   },
