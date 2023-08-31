@@ -57,7 +57,7 @@ interface NSModule<STATE, MUTATIONS, ACTIONS, GETTERS, MODULES> {
 }
 
 export function defineModule<
-  STATE, MUTATIONS, ACTIONS, GETTERS, NAMESPACED extends boolean = false,
+  STATE, MUTATIONS, ACTIONS, GETTERS, NAMESPACED extends true | false = false,
 >(options: {
   namespaced?: NAMESPACED
   state: STATE
@@ -92,7 +92,7 @@ export function defineModule<
   //     : never
   /** Nesting is **not** allowed */
   modules?: never
-}): NAMESPACED extends true
+}): [NAMESPACED] extends [true]
     ? NSModule<
       STATE,
       MUTATIONS,
@@ -178,7 +178,7 @@ type StoreState<MODULES, ROOTSTATE> = Readonly<
 >
 
 type StoreCommit<MODULES, MUTATIONS> =
-  And<(
+  (
     MODULES[keyof MODULES] extends ModuleInstance
       ? ({
         <
@@ -205,13 +205,13 @@ type StoreCommit<MODULES, MUTATIONS> =
         >[1] : never): void
         })
       : never
-  ), {
+  ) & {
     <T extends keyof MUTATIONS>(type: T, payload: MUTATIONS[T]): void
     <T extends keyof MUTATIONS>(input: { type: T } & MUTATIONS[T]): void
-  }>
+  }
 
 type StoreDispatch<MODULES, ACTIONS> =
-  And<(MODULES[keyof MODULES] extends ModuleInstance
+  (MODULES[keyof MODULES] extends ModuleInstance
     ? { <
           K extends keyof FlattenActions<
             MODULES extends Modules ? MODULES : never
@@ -240,13 +240,13 @@ type StoreDispatch<MODULES, ACTIONS> =
         >[1]): Promise<any>
       }
     : never)
-    , {
+    & {
         <T extends keyof ACTIONS>(type: T, payload: ACTIONS[T]): Promise<any>
         <T extends keyof ACTIONS>(input: { type: T } & ACTIONS[T]): Promise<any>
-    }>
+    }
 
 type StoreGetters<MODULES, GETTERS> =
-  And<(MODULES[keyof MODULES] extends ModuleInstance ? {
+  (MODULES[keyof MODULES] extends ModuleInstance ? {
     [K in keyof FlattenGetters<
       MODULES extends Modules ? MODULES : never
     >]:
@@ -254,9 +254,8 @@ type StoreGetters<MODULES, GETTERS> =
       MODULES extends Modules ? MODULES : never
     >[K]
   }
-    : never),
-    { [K in keyof GETTERS]: GETTERS[K] }
-  >
+    : never
+  ) & { [K in keyof GETTERS]: GETTERS[K] }
 
 // ---
 

@@ -1,7 +1,7 @@
 import { assertType, describe, expect, it } from 'vitest'
 import Vuex from 'vuex'
 import Vue from 'vue'
-import { defineStore } from '../src'
+import { defineModule, defineStore } from '../src'
 import { userModule } from './modules/user'
 import { countModule } from './modules/count'
 
@@ -82,7 +82,7 @@ describe('vuex', () => {
     Vue.use(Vuex)
     const testStore1 = new Vuex.Store(testStore1Options)
 
-    const { store: testStore2 } = defineStore({
+    const newStore = defineStore({
       state: {
         name: '123123',
         age: 18,
@@ -118,7 +118,40 @@ describe('vuex', () => {
           return state
         },
       },
+      modules: {
+        m1: defineModule({
+          namespaced: true,
+          state: {a: '1'},
+          mutations: {
+            UPDATE(state, payload: string) {
+              state.a = payload
+            }
+          },
+          actions: {
+            update({commit}) {
+              commit('UPDATE', '2')
+            }
+          }
+        }),
+        m2: defineModule({
+          state: {a: '1'},
+          mutations: {
+            UPDATE(state, payload: string) {
+              state.a = payload
+            }
+          },
+          actions: {
+            update2({commit}) {
+              commit('UPDATE', '2')
+            }
+          }
+        })
+      }
     })
+
+    const testStore2 = newStore.store
+
+    testStore2.dispatch
 
     assertType<string>(testStore2.getters.username)
     assertType<string>(testStore2.state.name)
@@ -140,7 +173,10 @@ describe('vuex', () => {
 
     testStore2.commit('SET_NAME', '222')
 
+
     testStore2.dispatch('setName', '333')
+    testStore2.dispatch('m1/update', '2')
+    testStore2.dispatch('update2', '2')
 
     expect(testStore2.getters.username).toBe('333')
 

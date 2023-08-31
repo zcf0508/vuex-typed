@@ -1,6 +1,8 @@
 #!/bin/bash
 
 echo '*** test on vue 2 + vuex 3 ***'
+rm -rf node_modules
+rm pnpm-lock.yaml
 pnpm install
 pnpm run build
 pnpm run test:once

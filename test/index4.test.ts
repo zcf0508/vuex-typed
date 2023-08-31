@@ -1,7 +1,7 @@
 import { assertType, describe, expect, it } from 'vitest'
 import { createStore } from 'vuex'
 import { createApp, defineComponent } from 'vue'
-import { defineStore } from '../src'
+import { defineModule, defineStore } from '../src'
 import { userModule } from './modules/user'
 import { countModule } from './modules/count'
 
@@ -115,6 +115,35 @@ describe('vuex', () => {
           return state
         },
       },
+      modules: {
+        m1: defineModule({
+          namespaced: true,
+          state: {a: '1'},
+          mutations: {
+            UPDATE(state, payload: string) {
+              state.a = payload
+            }
+          },
+          actions: {
+            update({commit}) {
+              commit('UPDATE', '2')
+            }
+          }
+        }),
+        m2: defineModule({
+          state: {a: '1'},
+          mutations: {
+            UPDATE(state, payload: string) {
+              state.a = payload
+            }
+          },
+          actions: {
+            update2({commit}) {
+              commit('UPDATE', '2')
+            }
+          }
+        })
+      }
     })
 
     assertType<string>(testStore2.getters.username)
@@ -138,6 +167,8 @@ describe('vuex', () => {
     testStore2.commit('SET_NAME', '222')
 
     testStore2.dispatch('setName', '333')
+    testStore2.dispatch('m1/update', '2')
+    testStore2.dispatch('update2', '2')
 
     expect(testStore2.getters.username).toBe('333')
 
