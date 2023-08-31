@@ -1,0 +1,21 @@
+{
+  "name": "vue2-type",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "MIT",
+  "keywords": [],
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "vue": "^2.7.14",
+    "vuex": "^3.6.2",
+    "z-vuex-typed": "workspace:*"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue2": "^2.2.0",
+    "typescript": "^5.1.6",
+    "vite": "^4.4.9"
+  }
+}

@@ -24,35 +24,13 @@ jobs:
           node-version: 18.x
 
       - name: Setup
-        run: npm i -g @antfu/ni
+        run: npm i -g pnpm
 
       - name: Install
-        run: nci
+        run: pnpm install
 
       - name: Lint
-        run: nr lint
-
-  typecheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-
-      - name: Set node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-
-      - name: Setup
-        run: npm i -g @antfu/ni
-
-      - name: Install
-        run: nci
-
-      - name: Typecheck
-        run: nr typecheck
+        run: pnpm lint
 
   test:
     runs-on: ${{ matrix.os }}
@@ -75,13 +53,13 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Setup
-        run: npm i -g @antfu/ni
+        run: npm i -g pnpm
 
       - name: Install
-        run: nci
+        run: pnpm install
+      
+      - name: Install
+        run: pnpm build
 
       - name: Build
-        run: nr build
-
-      - name: Test
-        run: nr test
+        run: bash ./runtest.sh

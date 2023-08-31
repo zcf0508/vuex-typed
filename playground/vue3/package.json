@@ -1,5 +1,5 @@
 {
-  "name": "vue2-type",
+  "name": "vue3-type",
   "version": "1.0.0",
   "description": "",
   "author": "",
@@ -9,12 +9,12 @@
     "dev": "vite"
   },
   "dependencies": {
-    "vue": "^2.7.14",
+    "vue": "^3.3.4",
+    "vuex": "^4.1.0",
     "z-vuex-typed": "workspace:*"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue2": "^2.2.0",
-    "typescript": "^5.1.6",
+    "@vitejs/plugin-vue": "^4.3.4",
     "vite": "^4.4.9"
   }
 }

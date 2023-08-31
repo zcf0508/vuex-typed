@@ -1,0 +1,23 @@
+diff --git a/types/vue.d.ts b/types/vue.d.ts
+index baef6f82302fff6f33516a6d3a028e7a5b508b29..2f5dccc527da18b9dc90503a2962895d2f4c113b 100644
+--- a/types/vue.d.ts
++++ b/types/vue.d.ts
+@@ -2,11 +2,11 @@
+  * Extends interfaces in Vue.js
+  */
+ 
+-import { ComponentCustomOptions } from "vue";
+-import { Store } from "./index";
++// import { ComponentCustomOptions } from "vue";
++// import { Store } from "./index";
+ 
+-declare module "@vue/runtime-core" {
+-  interface ComponentCustomOptions {
+-    store?: Store<any>;
+-  }
+-}
++// declare module "@vue/runtime-core" {
++//   interface ComponentCustomOptions {
++//     store?: Store<any>;
++//   }
++// }

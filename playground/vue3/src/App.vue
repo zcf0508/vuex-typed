@@ -1,7 +1,8 @@
 <script>
+import { defineComponent } from 'vue'
 import { mapActions, mapGetters, mapState } from '@/store/index'
 
-export default {
+export default defineComponent({
   name: 'App',
   computed: {
     ...mapState(['name']),
@@ -16,7 +17,7 @@ export default {
       })
     },
   },
-}
+})
 </script>
 
 <template>

@@ -41,7 +41,7 @@
     "src"
   ],
   "engines": {
-    "node": ">= 14.0.0"
+    "node": ">= 16.0.0"
   },
   "scripts": {
     "build": "unbuild",
@@ -50,10 +50,10 @@
     "prepublishOnly": "npm run build",
     "release": "bumpp",
     "start": "esno src/index.ts",
-    "test": "vitest ./test/index3",
-    "test:once": "vitest run ./test/index3",
+    "test": "vitest ./test/index4",
+    "test:once": "vitest run ./test/index4",
     "typecheck": "tsc --noEmit",
-    "play": "npm -C playground/vue2 run dev"
+    "play": "npm -C playground/vue3 run dev"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.8",
@@ -71,12 +71,12 @@
     "unbuild": "^1.2.1",
     "vite": "^4.4.7",
     "vitest": "^0.33.0",
-    "vue": "2.7.14",
-    "vuex": "3.6.2"
+    "vue": "^3.0.2",
+    "vuex": "4"
   },
   "pnpm": {
     "patchedDependencies": {
-      "vuex@3.6.2": "patches/vuex@3.6.2.patch"
+      "vuex@4.0.0": "patches/vuex@4.0.0.patch"
     }
   }
 }

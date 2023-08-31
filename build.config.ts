@@ -12,7 +12,6 @@ export default defineBuildConfig({
       respectExternal: false,
     },
   },
-  externals: ['vue'],
-  dependencies: ['vuex'],
+  externals: ['vue', 'vuex'],
   failOnWarn: false,
 })

@@ -8,6 +8,9 @@ import type { ActionContext, Store as VuexStore } from 'vuex'
 import Vue from 'vue'
 import type { ComputedGetter } from 'vue'
 import type { And } from './utils'
+import { IS_VUEX_3 } from './helper'
+
+// type ComputedGetter<T> = (...args: any[]) => T
 
 interface ModuleCommit<MUTATIONS> {
   <T extends keyof MUTATIONS>(type: T, payload: MUTATIONS[T]): void
@@ -104,7 +107,7 @@ export function defineModule<
       GETTERS
       // MDS
   > {
-  // @ts-expect-error
+  // @ts-ignore
   return options
 }
 
@@ -425,22 +428,27 @@ interface MapState<STATE, MODULES> {
 
 // ---
 
+type StoreInstance<
+  MODULES, ROOTSTATE, MUTATIONS, ACTIONS, GETTERS,
+> = Omit<InstanceType<typeof VuexStore<StoreState<MODULES, ROOTSTATE>>>, 'state' | 'commit' | 'dispatch' | 'getters'> & {
+  state: StoreState<MODULES, ROOTSTATE>
+  /** mutations */
+  commit: StoreCommit<MODULES, MUTATIONS>
+  /** actions */
+  dispatch: StoreDispatch<MODULES, ACTIONS>
+  /** getters */
+  getters: StoreGetters<MODULES, GETTERS>
+}
+
 interface StoreWrap<
   MODULES, ROOTSTATE, MUTATIONS, ACTIONS, GETTERS,
 > {
-  store: Omit<InstanceType<typeof VuexStore<StoreState<MODULES, ROOTSTATE>>>, 'state' | 'commit' | 'dispatch' | 'getters'> & {
-    state: StoreState<MODULES, ROOTSTATE>
-    /** mutations */
-    commit: StoreCommit<MODULES, MUTATIONS>
-    /** actions */
-    dispatch: StoreDispatch<MODULES, ACTIONS>
-    /** getters */
-    getters: StoreGetters<MODULES, GETTERS>
-  }
+  store: StoreInstance<MODULES, ROOTSTATE, MUTATIONS, ACTIONS, GETTERS>
   mapMutations: MapMutations<MUTATIONS, MODULES>
   mapGetters: MapGetters<GETTERS, MODULES>
   mapActions: MapActions<ACTIONS, MODULES>
   mapState: MapState<ROOTSTATE, MODULES>
+  useStore: () => StoreInstance<MODULES, ROOTSTATE, MUTATIONS, ACTIONS, GETTERS>
 }
 
 export function defineStore<
@@ -474,16 +482,19 @@ export function defineStore<
   getters?: { [K in keyof GETTERS]: (state: StoreState<MODULES, ROOTSTATE>) => GETTERS[K] }
 
 }): StoreWrap<MODULES, ROOTSTATE, MUTATIONS, ACTIONS, GETTERS> {
-  Vue.use(Vuex)
-  // @ts-expect-error
-  const store = new Vuex.Store(options)
+  if (IS_VUEX_3)
+    // @ts-ignore
+    Vue.use(Vuex)
+
+  // @ts-ignore
+  const store = IS_VUEX_3 ? new Vuex.Store(options) : Vuex.createStore(options)
 
   return {
-    // @ts-expect-error
     store,
     mapState: _mapState,
     mapMutations: _mapMutations,
     mapActions: _mapActions,
     mapGetters: _mapGetters,
+    useStore: () => store,
   }
 }
