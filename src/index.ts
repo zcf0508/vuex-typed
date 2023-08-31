@@ -5,7 +5,6 @@ import Vuex, {
   mapState as _mapState,
 } from 'vuex'
 import type { ActionContext, Store as VuexStore } from 'vuex'
-import Vue from 'vue'
 import type { ComputedGetter } from 'vue'
 import type { And } from './utils'
 import { IS_VUEX_3 } from './helper'
@@ -481,9 +480,6 @@ export function defineStore<
   getters?: { [K in keyof GETTERS]: (state: StoreState<MODULES, ROOTSTATE>) => GETTERS[K] }
 
 }): StoreWrap<MODULES, ROOTSTATE, MUTATIONS, ACTIONS, GETTERS> {
-  if (IS_VUEX_3)
-    // @ts-ignore
-    Vue.use(Vuex)
 
   // @ts-ignore
   const store = IS_VUEX_3 ? new Vuex.Store(options) : Vuex.createStore(options)

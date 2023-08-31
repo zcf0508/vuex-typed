@@ -5,6 +5,8 @@ import { defineModule, defineStore } from '../src'
 import { userModule } from './modules/user'
 import { countModule } from './modules/count'
 
+Vue.use(Vuex)
+
 const { store, mapGetters, mapMutations, mapActions, mapState } = defineStore({
   state: {
     gUsername: '123',
@@ -81,7 +83,7 @@ describe('vuex', () => {
     }
     Vue.use(Vuex)
     const testStore1 = new Vuex.Store(testStore1Options)
-
+    
     const newStore = defineStore({
       state: {
         name: '123123',
