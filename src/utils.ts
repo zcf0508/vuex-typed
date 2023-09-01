@@ -15,7 +15,7 @@ export type Includes<T, U> = UnionToIntersection<T extends any ? AnyOf<T, U> : n
 
 // ---
 
-// 获取所有 module 中对应属性的键值
+/** Get the keys corresponding to the attributes in all Modules. */
 export type GetModulesKeys<T extends Record<string, ModuleInstance>, K extends 'state' | 'mutations' | 'actions' | 'getters'> = keyof UnionToIntersection<{
   [I in keyof T]: T[I] extends Module<any, any, any, any>
     ? T[I] extends { [P in K]: infer U }
@@ -24,7 +24,7 @@ export type GetModulesKeys<T extends Record<string, ModuleInstance>, K extends '
     : never
 }[keyof T]>
 
-// 获取所有 module 中对应属性的键值
+/** Get the keys corresponding to the attributes in all NSModules. */
 export type GetNSModulesKeys<T extends Record<string, ModuleInstance>, K extends 'state' | 'mutations' | 'actions' | 'getters'> = keyof UnionToIntersection<{
   [I in keyof T]: T[I] extends NSModule<any, any, any, any, any>
     ? T[I] extends { [P in K]: infer U }
