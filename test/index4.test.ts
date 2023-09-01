@@ -3,6 +3,7 @@ import { createStore } from 'vuex'
 import { createApp, defineComponent } from 'vue'
 import { defineModule, defineStore } from '../src'
 import { userModule } from './modules/user'
+import { user22Module } from './modules/user2'
 import { countModule } from './modules/count'
 
 const { store, mapGetters, mapMutations, mapActions, mapState } = defineStore({
@@ -11,6 +12,7 @@ const { store, mapGetters, mapMutations, mapActions, mapState } = defineStore({
   },
   modules: {
     user: userModule,
+    user22: user22Module,
     count: countModule,
   },
   mutations: {
@@ -184,7 +186,7 @@ describe('vuex', () => {
   it('test mapGetters', () => {
     const app = createApp(defineComponent({
       computed: {
-        ...mapGetters(['userinfo', 'gUsername']),
+        ...mapGetters(['userinfo', 'gUsername', 'userinfo22']),
         ...mapGetters({
           newGUsername: 'gUsername',
         }),
@@ -201,6 +203,7 @@ describe('vuex', () => {
     assertType<any>(vm.username)
     assertType<any>(vm.double2)
 
+    assertType<{ uname22: string; uage22: number }>(vm.userinfo22)
     assertType<{ uname: string; uage: number }>(vm.userinfo)
     assertType<string>(vm.newGUsername)
     assertType<string>(vm.gUsername)
