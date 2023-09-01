@@ -3,6 +3,7 @@
   "rules": {
     "@typescript-eslint/ban-ts-comment": 0,
     "@typescript-eslint/prefer-ts-expect-error": 0,
-    "@typescript-eslint/no-require-imports": 1
+    "@typescript-eslint/no-require-imports": 1,
+    "@typescript-eslint/ban-types": 1
   }
 }

@@ -1,6 +1,6 @@
 import { assertType, describe, expect, it } from 'vitest'
 import Vuex from 'vuex'
-import Vue from 'vue'
+import Vue, { defineComponent } from 'vue'
 import { defineModule, defineStore } from '../src'
 import { userModule } from './modules/user'
 import { countModule } from './modules/count'
@@ -189,8 +189,7 @@ describe('vuex', () => {
   })
 
   it('test mapGetters', () => {
-    const a = mapGetters(['userinfo', 'gUsername'])
-    const vm = new Vue({
+    const vm = new Vue(defineComponent({
       store,
       computed: {
         ...mapGetters(['userinfo', 'gUsername']),
@@ -202,10 +201,12 @@ describe('vuex', () => {
         }),
         ...mapGetters('count', ['double']),
       },
-    })
+    }))
 
-    // @ts-expect-error
-    const name = vm.username
+    //  ↓ not export by mapGetters
+    assertType<any>(vm.username)
+    assertType<any>(vm.double2)
+
     assertType<{ uname: string; uage: number }>(vm.userinfo)
     assertType<string>(vm.newGUsername)
     assertType<string>(vm.gUsername)
@@ -220,7 +221,7 @@ describe('vuex', () => {
   })
 
   it('test mapMutations', () => {
-    const vm = new Vue({
+    const vm = new Vue(defineComponent({
       store,
       computed: {
         ...mapGetters(['username', 'gUsername']),
@@ -238,13 +239,17 @@ describe('vuex', () => {
         }),
         ...mapMutations('count', ['SET_NUM']),
       },
-    })
+    }))
+
+    //  ↓ not export by mapMutations
+    assertType<any>(vm.SET_AGE)
 
     assertType<string>(vm.username)
     assertType<string>(vm.gUsername)
     assertType<number>(vm.double)
     assertType<(p: string) => any>(vm.SET_NAME)
     assertType<(p: number) => any>(vm.NEW_SET_NUM)
+    assertType<(p: number) => any>(vm.SET_NUM)
     assertType<(p: string) => any>(vm.NEW_SET_G_USERNAME)
     assertType<(p: string) => any>(vm.SET_G_USERNAME)
 
@@ -258,11 +263,12 @@ describe('vuex', () => {
     expect(vm.gUsername).toBe('333')
 
     vm.NEW_SET_NUM(2)
+    vm.SET_NUM(2)
     expect(vm.double).toBe(4)
   })
 
   it('test mapActions', () => {
-    const vm = new Vue({
+    const vm = new Vue(defineComponent({
       store,
       computed: {
         ...mapGetters(['username', 'gUsername']),
@@ -287,7 +293,10 @@ describe('vuex', () => {
         }),
         ...mapActions('count', ['add']),
       },
-    })
+    }))
+
+    //  ↓ not export by mapActions
+    assertType<any>(vm.setAge)
 
     assertType<string>(vm.username)
     assertType<string>(vm.gUsername)
@@ -318,7 +327,7 @@ describe('vuex', () => {
   })
 
   it('test mapState', () => {
-    const vm = new Vue({
+    const vm = new Vue(defineComponent({
       store,
       computed: {
         ...mapState(['uname', 'gUsername']),
@@ -333,7 +342,10 @@ describe('vuex', () => {
           newNum: 'num',
         }),
       },
-    })
+    }))
+
+    //  ↓ not export by mapState
+    assertType<any>(vm.uage)
 
     // vuex not support
     assertType<undefined>(vm.uname)

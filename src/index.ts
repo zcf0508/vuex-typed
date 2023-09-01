@@ -267,9 +267,9 @@ interface MapGetters<GETTERS, MODULES> {
       M extends Module<any, any, any, any>
         ? M['getters']
         : never
-    ), KEY_ITEM extends MODULE_GETTERS_KEYS | GETTERS_KEYS,
+    ), KEY_ITEM extends string,
   >(map: KEY_ITEM[]): {
-    [K in KEY_ITEM]:
+    [K in KEY_ITEM extends MODULE_GETTERS_KEYS | GETTERS_KEYS ? KEY_ITEM : never]:
     K extends MODULE_GETTERS_KEYS
       ? ComputedGetter< M extends Module<any, any, any, any> ? ReturnType<M['getters'][K]> : never >
       : K extends GETTERS_KEYS
@@ -290,9 +290,9 @@ interface MapGetters<GETTERS, MODULES> {
     [K in keyof MAP]: ComputedGetter<ReturnType<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['getters'][MAP[K]] : never>>
   }
   <
-    MODULES_KEYS extends keyof MODULES, MAP extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['getters'] : never),
-  >(namespace: MODULES_KEYS, map: MAP[]): {
-    [K in MAP]: ComputedGetter<ReturnType<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['getters'][K] : never>>
+    MODULES_KEYS extends keyof MODULES, ALL_KEYS extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['getters'] : never), MAP_ITEM extends string,
+  >(namespace: MODULES_KEYS, map: MAP_ITEM[]): {
+    [K in MAP_ITEM extends ALL_KEYS ? MAP_ITEM : never]: ComputedGetter<ReturnType<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['getters'][K] : never>>
   }
 }
 
@@ -310,13 +310,16 @@ interface MapMutations<MUTATIONS, MODULES> {
   }>
   // 1.2 accept a list
   <
-    MUTATIONS_KEYS extends keyof MUTATIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_MUTATIONS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['mutations'] : never), KEY_ITEM extends MODULE_MUTATIONS_KEYS | MUTATIONS_KEYS,
+    MUTATIONS_KEYS extends keyof MUTATIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_MUTATIONS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['mutations'] : never), KEY_ITEM extends string,
   >(map: KEY_ITEM[]): {
-    [K in MODULE_MUTATIONS_KEYS]: K extends KEY_ITEM ? (payload: Parameters<
-      M extends Module<any, any, any, any> ? M['mutations'][K] : never
-    >[1]) => void : never
-  } & {
-    [K in MUTATIONS_KEYS]: K extends KEY_ITEM ? (payload: MUTATIONS[K]) => void : never
+    [K in KEY_ITEM extends MODULE_MUTATIONS_KEYS | MUTATIONS_KEYS ? KEY_ITEM : never]:
+    K extends MODULE_MUTATIONS_KEYS
+      ? (payload: Parameters<
+          M extends Module<any, any, any, any> ? M['mutations'][K] : never
+        >[1]) => void
+      : K extends MUTATIONS_KEYS
+        ? (payload: MUTATIONS[K]) => void
+        : never
   }
   // 2.with namespace
   <
@@ -325,9 +328,9 @@ interface MapMutations<MUTATIONS, MODULES> {
     [K in keyof MAP]: (payload: Parameters<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['mutations'][MAP[K]] extends (...args: any) => any ? MODULES[MODULES_KEYS]['mutations'][MAP[K]] : never : never>[1]) => void
   }
   <
-    MODULES_KEYS extends keyof MODULES, MAP_ITEM extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['mutations'] : never),
+    MODULES_KEYS extends keyof MODULES, ALL_KEYS extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['mutations'] : never), MAP_ITEM extends string,
   >(namespace: MODULES_KEYS, map: MAP_ITEM[]): {
-    [K in MAP_ITEM]: (payload: Parameters<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['mutations'][K] extends (...args: any) => any ? MODULES[MODULES_KEYS]['mutations'][K] : never : never>[1]) => void
+    [K in MAP_ITEM extends ALL_KEYS ? MAP_ITEM : never]: (payload: Parameters<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['mutations'][K] extends (...args: any) => any ? MODULES[MODULES_KEYS]['mutations'][K] : never : never>[1]) => void
   }
 }
 
@@ -335,9 +338,9 @@ interface MapActions<ACTIONS, MODULES> {
   // 1. without namespace
   // 1.1 accept a list
   <
-    ACTIONS_KEYS extends keyof ACTIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_ACTIONS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['actions'] : never), MAP_ITEM extends MODULE_ACTIONS_KEYS | ACTIONS_KEYS,
+    ACTIONS_KEYS extends keyof ACTIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_ACTIONS_KEYS extends keyof (M extends Module<any, any, any, any> ? M['actions'] : never), MAP_ITEM extends string,
   >(map: MAP_ITEM[]): {
-    [K in MAP_ITEM]:
+    [K in MAP_ITEM extends MODULE_ACTIONS_KEYS | ACTIONS_KEYS ? MAP_ITEM : never]:
     K extends MODULE_ACTIONS_KEYS
       ? (payload: Parameters<
         M extends Module<any, any, any, any> ? M['actions'][K] : never
@@ -363,9 +366,9 @@ interface MapActions<ACTIONS, MODULES> {
     [K in keyof MAP]: (payload: Parameters<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['actions'][MAP[K]] extends (...args: any) => any ? MODULES[MODULES_KEYS]['actions'][MAP[K]] : never : never>[1]) => void
   }
   <
-    MODULES_KEYS extends keyof MODULES, MAP_ITEM extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['actions'] : never),
+    MODULES_KEYS extends keyof MODULES, ALL_KEYS extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['actions'] : never), MAP_ITEM extends string,
   >(namespace: MODULES_KEYS, map: MAP_ITEM[]): {
-    [K in MAP_ITEM]: (payload: Parameters<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['actions'][K] extends (...args: any) => any ? MODULES[MODULES_KEYS]['actions'][K] : never : never>[1]) => void
+    [K in MAP_ITEM extends ALL_KEYS ? MAP_ITEM : never]: (payload: Parameters<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['actions'][K] extends (...args: any) => any ? MODULES[MODULES_KEYS]['actions'][K] : never : never>[1]) => void
   }
 }
 
@@ -373,10 +376,10 @@ interface MapState<STATE, MODULES> {
   // 1.without namespace
   // 1.1 accept a list
   <
-    STATE_KEYS extends keyof STATE, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_STATE_KEYS extends keyof (M extends Module<any, any, any, any> ? M['state'] : never), KEY_ITEM extends (MODULE_STATE_KEYS | STATE_KEYS),
+    STATE_KEYS extends keyof STATE, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_STATE_KEYS extends keyof (M extends Module<any, any, any, any> ? M['state'] : never), KEY_ITEM extends string,
   >(map: KEY_ITEM[]): {
     /** vuex not support */
-    [K in KEY_ITEM]:
+    [K in KEY_ITEM extends MODULE_STATE_KEYS | STATE_KEYS ? KEY_ITEM : never]:
     K extends MODULE_STATE_KEYS
       ? ComputedGetter<
       M extends Module<any, any, any, any>
@@ -408,9 +411,9 @@ interface MapState<STATE, MODULES> {
     [K in keyof MAP]: ComputedGetter<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['state'][MAP[K]] : never>
   }
   <
-    MODULES_KEYS extends keyof MODULES, MAP extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['state'] : never),
-  >(namespace: MODULES_KEYS, map: MAP[]): {
-    [K in MAP]: ComputedGetter<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['state'][K] : never>
+    MODULES_KEYS extends keyof MODULES, ALL_KEYS extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['state'] : never), MAP_ITEM extends string,
+  >(namespace: MODULES_KEYS, map: MAP_ITEM[]): {
+    [K in MAP_ITEM extends ALL_KEYS ? MAP_ITEM : never]: ComputedGetter<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['state'][K] : never>
   }
 }
 

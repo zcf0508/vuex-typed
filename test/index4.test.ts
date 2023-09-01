@@ -197,8 +197,10 @@ describe('vuex', () => {
     app.use(store)
     const vm = app.mount(document.createElement('div'))
 
-    // @ts-expect-error
-    const name = vm.username
+    //  ↓ not export by mapGetters
+    assertType<any>(vm.username)
+    assertType<any>(vm.double2)
+
     assertType<{ uname: string; uage: number }>(vm.userinfo)
     assertType<string>(vm.newGUsername)
     assertType<string>(vm.gUsername)
@@ -233,6 +235,9 @@ describe('vuex', () => {
     }))
     app.use(store)
     const vm = app.mount(document.createElement('div'))
+
+    //  ↓ not export by mapMutations
+    assertType<any>(vm.SET_AGE)
 
     assertType<string>(vm.username)
     assertType<string>(vm.gUsername)
@@ -284,6 +289,9 @@ describe('vuex', () => {
     app.use(store)
     const vm = app.mount(document.createElement('div'))
 
+    //  ↓ not export by mapActions
+    assertType<any>(vm.setAge)
+
     assertType<string>(vm.username)
     assertType<string>(vm.gUsername)
     assertType<string>(vm.newGUsernam)
@@ -330,6 +338,9 @@ describe('vuex', () => {
     }))
     app.use(store)
     const vm = app.mount(document.createElement('div'))
+
+    //  ↓ not export by mapState
+    assertType<any>(vm.uage)
 
     // vuex not support
     assertType<undefined>(vm.uname)
