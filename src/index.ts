@@ -54,7 +54,7 @@ interface NSModule<STATE, MUTATIONS, ACTIONS, GETTERS, MODULES> {
 }
 
 export function defineModule<
-  STATE, MUTATIONS, ACTIONS, GETTERS, NAMESPACED extends true | false = false,
+  STATE = {}, MUTATIONS = {}, ACTIONS = {}, GETTERS = {}, NAMESPACED extends true | false = false,
 >(options: {
   namespaced?: NAMESPACED
   state: STATE
@@ -440,7 +440,7 @@ interface StoreWrap<
 }
 
 export function defineStore<
-  MODULES, ROOTSTATE extends Record<string, any>, MUTATIONS, ACTIONS, GETTERS,
+  MODULES = {}, ROOTSTATE extends Record<string, any> = {}, MUTATIONS = {}, ACTIONS = {}, GETTERS = {},
 >(options: {
   modules?: { [K in keyof MODULES]:
     MODULES[K] extends ModuleInstance
