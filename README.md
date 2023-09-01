@@ -125,7 +125,11 @@ export {
 
 3. install the `store`
 
-First, **change store type declare** .
+First, if you using `vue2` + `vuex`, you need patch vuex.
+
+More info check [vuex patch](./patches/vuex@3.6.2.patch) and [package.json](./package.json#L81-L84)
+
+And then, **change store type declare** .
 
 ```ts
 // vue2
