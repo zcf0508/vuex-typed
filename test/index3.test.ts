@@ -30,12 +30,14 @@ const { store, mapGetters, mapMutations, mapActions, mapState } = defineStore({
   },
 }, Vue)
 
+// @ts-ignore
 declare module 'vue/types/options' {
   interface ComponentOptions<V extends Vue> {
     store?: typeof store
   }
 }
 
+// @ts-ignore
 declare module 'vue/types/vue' {
   interface Vue {
     $store: typeof store
@@ -123,16 +125,26 @@ describe('vuex', () => {
       modules: {
         m1: defineModule({
           namespaced: true,
-          state: { a: '1' },
+          state: { a: '1', b: 2 },
           mutations: {
             UPDATE(state, payload: string) {
               state.a = payload
             },
+            UPDATE2(state, payload: number) {
+              state.b = payload
+            },
           },
           actions: {
-            update({ commit }) {
+            update({ commit }, payload: undefined) {
               commit('UPDATE', '2')
             },
+            update2({ commit }, payload: string) {
+              commit('UPDATE', payload)
+            },
+          },
+          getters: {
+            nsga: state => state.a,
+            nsgb: state => state.b,
           },
         }),
         m2: defineModule({
@@ -143,7 +155,7 @@ describe('vuex', () => {
             },
           },
           actions: {
-            update2({ commit }) {
+            update2({ commit }, payload: undefined) {
               commit('UPDATE', '2')
             },
           },
@@ -156,6 +168,7 @@ describe('vuex', () => {
     testStore2.dispatch
 
     assertType<string>(testStore2.getters.username)
+    assertType<number>(testStore2.getters['m1/nsgb'])
     assertType<string>(testStore2.state.name)
 
     expect(testStore1.state.name).toBe(testStore2.state.name)
@@ -174,10 +187,12 @@ describe('vuex', () => {
     expect(testStore2.getters.username).toBe('333')
 
     testStore2.commit('SET_NAME', '222')
+    testStore2.commit('m1/UPDATE2', 2)
 
     testStore2.dispatch('setName', '333')
-    testStore2.dispatch('m1/update', '2')
-    testStore2.dispatch('update2', '2')
+    testStore2.dispatch('m1/update', undefined)
+    testStore2.dispatch('m1/update2', '2')
+    testStore2.dispatch('update2', undefined)
 
     expect(testStore2.getters.username).toBe('333')
 

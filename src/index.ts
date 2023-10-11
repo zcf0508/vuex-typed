@@ -6,7 +6,7 @@ import Vuex, {
 } from 'vuex'
 import type { ActionContext, Store as VuexStore } from 'vuex'
 import type { ComputedGetter } from 'vue'
-import type { And, GetModulesKeys } from './utils'
+import type { And, GetModulesKeys, UnionToIntersection } from './utils'
 import { IS_VUEX_3 } from './helper'
 
 interface ModuleCommit<MUTATIONS> {
@@ -115,56 +115,52 @@ export type ModuleInstance =
 
 export type Modules = Record<string, ModuleInstance>
 
+type Flatten<T extends Record<string, Record<string, any>>> = UnionToIntersection<T[keyof T]>
+
 /**
  * A helper type for expanding `getters`.
  */
 type FlattenGetters<
   T extends Modules,
-> = {
-  [K in keyof T as (
-    T[K] extends NSModule<any, any, any, any, any>
-      ? `${string & K}/${
-          keyof T[K]['getters'] extends string
-            ? keyof T[K]['getters']
-            : never
-      }`
-      : keyof T[K]['getters']
-  )]: ReturnType<T[K]['getters'][keyof T[K]['getters']]>
-}
+> = Flatten<{
+  [K1 in keyof T]: {
+    [K2 in keyof T[K1]['getters'] as (T[K1] extends NSModule<any, any, any, any, any>
+      ? `${string & K1}/${
+          string & K2
+      }` : K2)
+    ]: ReturnType<T[K1]['getters'][K2]>
+  }
+}>
 
 /**
  * A helper type for expanding `mutations`.
  */
 type FlattenMutations<
   T extends Modules,
-> = {
-  [K in keyof T as (
-    T[K] extends NSModule<any, any, any, any, any>
-      ? `${string & K}/${
-          keyof T[K]['mutations'] extends string
-            ? keyof T[K]['mutations']
-            : never
-      }`
-      : keyof T[K]['mutations']
-  )]: T[K]['mutations'][keyof T[K]['mutations']]
-}
+> = Flatten<{
+  [K1 in keyof T]: {
+    [K2 in keyof T[K1]['mutations'] as (T[K1] extends NSModule<any, any, any, any, any>
+      ? `${string & K1}/${
+          string & K2
+      }` : K2)
+    ]: T[K1]['mutations'][K2]
+  }
+}>
 
 /**
  * A helper type for expanding `actions`.
  */
 type FlattenActions<
   T extends Modules,
-> = {
-  [K in keyof T as (
-    T[K] extends NSModule<any, any, any, any, any>
-      ? `${string & K}/${
-          keyof T[K]['actions'] extends string
-            ? keyof T[K]['actions']
-            : never
-      }`
-      : keyof T[K]['actions']
-  )]: T[K]['actions'][keyof T[K]['actions']]
-}
+> = Flatten<{
+  [K1 in keyof T]: {
+    [K2 in keyof T[K1]['actions'] as (T[K1] extends NSModule<any, any, any, any, any>
+      ? `${string & K1}/${
+          string & K2
+      }` : K2)
+    ]: T[K1]['actions'][K2]
+  }
+}>
 
 // ---
 
@@ -176,82 +172,82 @@ type StoreState<MODULES, ROOTSTATE> = Readonly<
 type StoreCommit<MODULES, MUTATIONS> =
   (
     MODULES[keyof MODULES] extends ModuleInstance
-      ? ({
+      ? {
         <
-          K extends keyof FlattenMutations<
+          MS extends FlattenMutations<
             MODULES extends Modules ? MODULES : never
           >,
-        >(type: K, payload: FlattenMutations<
-          MODULES extends Modules ? MODULES : never
-        >[K] extends (...args: any) => any ? Parameters<
-          FlattenMutations<
-            MODULES extends Modules ? MODULES : never
-          >[K]
-        >[1] : never): void
+          K extends keyof (MS & MUTATIONS),
+        >(type: K extends string ? K : never, payload:
+          K extends keyof MS
+            ? MS[K] extends (...args: any) => any
+              ? Parameters<MS[K]>[1]
+              : undefined
+            : K extends keyof MUTATIONS
+              ? MUTATIONS[K]
+              : undefined
+          ): void
         <
-          K extends keyof FlattenMutations<
-            MODULES extends Modules ? MODULES : never
-          >,
-        >(input: { type: K } & FlattenMutations<
+        MS extends FlattenMutations<
           MODULES extends Modules ? MODULES : never
-        >[K] extends (...args: any) => any ? Parameters<
-          FlattenMutations<
-            MODULES extends Modules ? MODULES : never
-          >[K]
-        >[1] : never): void
-        })
-      : never
-  ) & {
-    <T extends keyof MUTATIONS>(type: T, payload: MUTATIONS[T]): void
-    <T extends keyof MUTATIONS>(input: { type: T } & MUTATIONS[T]): void
-  }
+        >,
+        K extends keyof (MS & MUTATIONS),
+      >(input: { type: K } & (
+          K extends keyof MS
+            ? MS[K] extends (...args: any) => any
+              ? Parameters<MS[K]>[1]
+              : {}
+            : K extends keyof MUTATIONS
+              ? MUTATIONS[K]
+              : {})): void
+        }
+      : {
+          <T extends keyof MUTATIONS>(type: T, payload: MUTATIONS[T]): void
+          <T extends keyof MUTATIONS>(input: { type: T } & MUTATIONS[T]): void
+        }
+  )
 
 type StoreDispatch<MODULES, ACTIONS> =
   (MODULES[keyof MODULES] extends ModuleInstance
     ? { <
-          K extends keyof FlattenActions<
-            MODULES extends Modules ? MODULES : never
-          >,
-        >(type: K, payload: Parameters<
-          FlattenActions<
-            MODULES extends Modules ? MODULES : never
-          >[K] extends (...args: any) => any ? FlattenActions<
-            MODULES extends Modules ? MODULES : never
-          >[K] : never
-        >[1]): Promise<any>
+          AS extends FlattenActions<
+          MODULES extends Modules ? MODULES : never
+        >,
+          K extends keyof (AS & ACTIONS),
+        >(type: K, payload:
+        K extends keyof AS
+          ? AS[K] extends (...args: any) => any 
+            ? Parameters<AS[K]>[1]
+            : undefined
+          : K extends keyof ACTIONS
+            ? ACTIONS[K]
+            : undefined
+        ): Promise<any>
         <
-          K extends keyof FlattenActions<
-            MODULES extends Modules ? MODULES : never
-          >,
-        >(input: { type: K } & Parameters<
-          FlattenActions<
-            MODULES extends Modules
-              ? MODULES
-              : never
-          >[K] extends (...args: any) => any ? FlattenActions<
-            MODULES extends Modules
-              ? MODULES
-              : never
-          >[K] : never
-        >[1]): Promise<any>
+          AS extends FlattenActions<
+          MODULES extends Modules ? MODULES : never
+        >,
+          K extends keyof (AS & ACTIONS),
+        >(input: { type: K } & (
+      K extends keyof AS
+        ? AS[K] extends (...args: any) => any 
+          ? Parameters<AS[K]>[1]
+          : {}
+        : K extends keyof ACTIONS
+          ? ACTIONS[K]
+          : {}
+    )): Promise<any>
       }
-    : never)
-  & {
-        <T extends keyof ACTIONS>(type: T, payload: ACTIONS[T]): Promise<any>
-        <T extends keyof ACTIONS>(input: { type: T } & ACTIONS[T]): Promise<any>
-  }
+    : {
+      <T extends keyof ACTIONS>(type: T, payload: ACTIONS[T]): Promise<any>
+      <T extends keyof ACTIONS>(input: { type: T } & ACTIONS[T]): Promise<any>
+      }
+  )
 
 type StoreGetters<MODULES, GETTERS> =
-  (MODULES[keyof MODULES] extends ModuleInstance ? {
-    [K in keyof FlattenGetters<
-      MODULES extends Modules ? MODULES : never
-    >]:
-    FlattenGetters<
-      MODULES extends Modules ? MODULES : never
-    >[K]
-  }
-    : never
-  ) & { [K in keyof GETTERS]: GETTERS[K] }
+FlattenGetters<
+  MODULES extends Modules ? MODULES : never
+> & { [K in keyof GETTERS]: GETTERS[K] }
 
 // ---
 

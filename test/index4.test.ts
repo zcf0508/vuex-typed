@@ -5,6 +5,7 @@ import { defineModule, defineStore } from '../src'
 import { userModule } from './modules/user'
 import { user22Module } from './modules/user2'
 import { countModule } from './modules/count'
+import { mount } from './helper'
 
 const { store, mapGetters, mapMutations, mapActions, mapState } = defineStore({
   state: {
@@ -30,6 +31,7 @@ const { store, mapGetters, mapMutations, mapActions, mapState } = defineStore({
   },
 })
 
+// @ts-ignore
 declare module '@vue/runtime-core' {
   interface ComponentCustomOptions {
     store?: typeof store
@@ -120,16 +122,26 @@ describe('vuex', () => {
       modules: {
         m1: defineModule({
           namespaced: true,
-          state: { a: '1' },
+          state: { a: '1', b: 2 },
           mutations: {
             UPDATE(state, payload: string) {
               state.a = payload
             },
+            UPDATE2(state, payload: number) {
+              state.b = payload
+            },
           },
           actions: {
-            update({ commit }) {
+            update({ commit }, payload: undefined) {
               commit('UPDATE', '2')
             },
+            update2({ commit }, payload: string) {
+              commit('UPDATE', payload)
+            },
+          },
+          getters: {
+            nsga: state => state.a,
+            nsgb: state => state.b,
           },
         }),
         m2: defineModule({
@@ -140,7 +152,7 @@ describe('vuex', () => {
             },
           },
           actions: {
-            update2({ commit }) {
+            update2({ commit }, payload: undefined) {
               commit('UPDATE', '2')
             },
           },
@@ -149,6 +161,7 @@ describe('vuex', () => {
     })
 
     assertType<string>(testStore2.getters.username)
+    assertType<number>(testStore2.getters['m1/nsgb'])
     assertType<string>(testStore2.state.name)
 
     expect(testStore1.state.name).toBe(testStore2.state.name)
@@ -167,10 +180,12 @@ describe('vuex', () => {
     expect(testStore2.getters.username).toBe('333')
 
     testStore2.commit('SET_NAME', '222')
+    testStore2.commit('m1/UPDATE2', 2)
 
     testStore2.dispatch('setName', '333')
-    testStore2.dispatch('m1/update', '2')
-    testStore2.dispatch('update2', '2')
+    testStore2.dispatch('m1/update', undefined)
+    testStore2.dispatch('m1/update2', '2')
+    testStore2.dispatch('update2', undefined)
 
     expect(testStore2.getters.username).toBe('333')
 
@@ -184,7 +199,7 @@ describe('vuex', () => {
   })
 
   it('test mapGetters', () => {
-    const app = createApp(defineComponent({
+    const vm = mount(store, defineComponent({
       computed: {
         ...mapGetters(['userinfo', 'gUsername', 'userinfo22']),
         ...mapGetters({
@@ -196,8 +211,6 @@ describe('vuex', () => {
         ...mapGetters('count', ['double']),
       },
     }))
-    app.use(store)
-    const vm = app.mount(document.createElement('div'))
 
     //  ↓ not export by mapGetters
     assertType<any>(vm.username)
@@ -218,7 +231,7 @@ describe('vuex', () => {
   })
 
   it('test mapMutations', () => {
-    const app = createApp(defineComponent({
+    const vm = mount(store, defineComponent({
       computed: {
         ...mapGetters(['username', 'gUsername']),
         ...mapGetters('count', {
@@ -236,8 +249,6 @@ describe('vuex', () => {
         ...mapMutations('count', ['SET_NUM']),
       },
     }))
-    app.use(store)
-    const vm = app.mount(document.createElement('div'))
 
     //  ↓ not export by mapMutations
     assertType<any>(vm.SET_AGE)
@@ -264,7 +275,7 @@ describe('vuex', () => {
   })
 
   it('test mapActions', () => {
-    const app = createApp(defineComponent({
+    const vm = mount(store, defineComponent({
       computed: {
         ...mapGetters(['username', 'gUsername']),
         ...mapGetters({
@@ -289,8 +300,6 @@ describe('vuex', () => {
         ...mapActions('count', ['add']),
       },
     }))
-    app.use(store)
-    const vm = app.mount(document.createElement('div'))
 
     //  ↓ not export by mapActions
     assertType<any>(vm.setAge)
@@ -324,7 +333,7 @@ describe('vuex', () => {
   })
 
   it('test mapState', () => {
-    const app = createApp(defineComponent({
+    const vm = mount(store, defineComponent({
       computed: {
         ...mapState(['uname', 'gUsername']),
         ...mapState({
@@ -339,8 +348,6 @@ describe('vuex', () => {
         }),
       },
     }))
-    app.use(store)
-    const vm = app.mount(document.createElement('div'))
 
     //  ↓ not export by mapState
     assertType<any>(vm.uage)
