@@ -11,7 +11,7 @@ export function createVueApp(options) {
     return Vue.createApp(options)
 }
 
-export function mount (store, component) {
+export function mount(store, component) {
   const el = createElement()
 
   component.render = component.render || (() => {})
@@ -23,7 +23,7 @@ export function mount (store, component) {
   return app.mount(el)
 }
 
-function createElement () {
+function createElement() {
   const el = document.createElement('div')
 
   document.body.appendChild(el)

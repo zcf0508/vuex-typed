@@ -1,6 +1,6 @@
 import { assertType, describe, expect, it } from 'vitest'
 import { createStore } from 'vuex'
-import { createApp, defineComponent } from 'vue'
+import { defineComponent } from 'vue'
 import { defineModule, defineStore } from '../src'
 import { userModule } from './modules/user'
 import { user22Module } from './modules/user2'

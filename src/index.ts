@@ -216,7 +216,7 @@ type StoreDispatch<MODULES, ACTIONS> =
           K extends keyof (AS & ACTIONS),
         >(type: K, payload:
         K extends keyof AS
-          ? AS[K] extends (...args: any) => any 
+          ? AS[K] extends (...args: any) => any
             ? Parameters<AS[K]>[1]
             : undefined
           : K extends keyof ACTIONS
@@ -230,7 +230,7 @@ type StoreDispatch<MODULES, ACTIONS> =
           K extends keyof (AS & ACTIONS),
         >(input: { type: K } & (
       K extends keyof AS
-        ? AS[K] extends (...args: any) => any 
+        ? AS[K] extends (...args: any) => any
           ? Parameters<AS[K]>[1]
           : {}
         : K extends keyof ACTIONS
