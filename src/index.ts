@@ -6,10 +6,11 @@ import Vuex, {
 } from 'vuex'
 import type { ActionContext, Store as VuexStore } from 'vuex'
 import type { ComputedGetter } from 'vue'
-import type { And, GetModulesKeys, UnionToIntersection } from './utils'
+import type { And, GetModulesKeys, HasDefinedAndNotAny, UnionToIntersection } from './utils'
 import { IS_VUEX_3 } from './helper'
 
 interface ModuleCommit<MUTATIONS> {
+  <T extends keyof MUTATIONS, P extends (HasDefinedAndNotAny<MUTATIONS[T]> extends false ? undefined : never)>(type: T, payload?: P): void
   <T extends keyof MUTATIONS>(type: T, payload: MUTATIONS[T]): void
   <T extends keyof MUTATIONS>(input: { type: T } & MUTATIONS[T]): void
 }
@@ -62,7 +63,7 @@ export function defineModule<
     /**
      * @param payload Pass `undefined` when no parameters are required
      */
-    (state: STATE, payload: MUTATIONS[K]) => void }
+    (state: STATE, payload: HasDefinedAndNotAny<MUTATIONS[K]> extends true ? MUTATIONS[K] : undefined) => void }
   actions?: {
     /**
      * @param ctx not support `rootState` and `rootGetters`
@@ -75,7 +76,7 @@ export function defineModule<
       commit: ModuleCommit<MUTATIONS>
       dispatch: DISPATCH
       getters: ACTIONGETTERS
-    }, payload: ACTIONS[K]) => any
+    }, payload: HasDefinedAndNotAny<ACTIONS[K]> extends true ? ACTIONS[K] : undefined) => any
   }
   getters?: {
     /** not support `rootState` and `rootGetters` */
@@ -448,7 +449,7 @@ export function defineStore<
     /**
      * @param payload Pass `undefined` when no parameters are required
      */
-    (state: ROOTSTATE, payload: MUTATIONS[K]) => void }
+    (state: ROOTSTATE, payload: HasDefinedAndNotAny<MUTATIONS[K]> extends true ? MUTATIONS[K] : undefined) => void }
   actions?: {
     /**
      * @param payload Pass `undefined` when no parameters are required
@@ -460,7 +461,7 @@ export function defineStore<
       commit: StoreCommit<MODULES, MUTATIONS>
       dispatch: DISPATCH
       getters: ACTIONGETTERS
-    }, payload: ACTIONS[K]) => void
+    }, payload: HasDefinedAndNotAny<ACTIONS[K]> extends true ? ACTIONS[K] : undefined) => void
   }
   getters?: { [K in keyof GETTERS]: (state: StoreState<MODULES, ROOTSTATE>) => GETTERS[K] }
 

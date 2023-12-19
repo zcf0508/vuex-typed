@@ -95,6 +95,9 @@ describe('vuex', () => {
         SET_AGE(state, age: number) {
           state.age = age
         },
+        Add_AGE(state) {
+          state.age++
+        },
         SET_NAME(state, payload: string) {
           state.name = payload
         },
@@ -106,6 +109,9 @@ describe('vuex', () => {
       actions: {
         setAge({ commit }, age: number) {
           commit('SET_AGE', age)
+        },
+        addAge({ commit }) {
+          commit('Add_AGE')
         },
         setName({ commit }, payload: string) {
           commit('SET_NAME', payload)
@@ -133,6 +139,9 @@ describe('vuex', () => {
             UPDATE2(state, payload: number) {
               state.b = payload
             },
+            ADD_B(state) {
+              state.b++
+            },
           },
           actions: {
             update({ commit }, payload: undefined) {
@@ -140,6 +149,9 @@ describe('vuex', () => {
             },
             update2({ commit }, payload: string) {
               commit('UPDATE', payload)
+            },
+            add_b({ commit }) {
+              commit('ADD_B')
             },
           },
           getters: {
@@ -179,7 +191,7 @@ describe('vuex', () => {
     expect(testStore2.getters.username).toBe('222')
 
     testStore2.commit({
-      type: 'SET_USER',
+      type: 'SET_USER' as const,
       name: '333',
       age: 20,
     })
@@ -197,7 +209,7 @@ describe('vuex', () => {
     expect(testStore2.getters.username).toBe('333')
 
     testStore2.dispatch({
-      type: 'setUser',
+      type: 'setUser' as const,
       name: '444',
       age: 21,
     })
