@@ -95,7 +95,7 @@ describe('vuex', () => {
         SET_AGE(state, age: number) {
           state.age = age
         },
-        Add_AGE(state) {
+        Add_AGE(state, payload: unknown) {
           state.age++
         },
         SET_NAME(state, payload: string) {
@@ -111,8 +111,8 @@ describe('vuex', () => {
           commit('SET_AGE', age)
           dispatch('addAge')
         },
-        addAge({ commit }) {
-          commit('Add_AGE')
+        addAge({ commit }, payload: unknown) {
+          commit('Add_AGE', payload)
         },
         setName({ commit }, payload: string) {
           commit('SET_NAME', payload)

@@ -187,7 +187,7 @@ type StoreCommit<MODULES, MUTATIONS> =
             : K extends keyof MUTATIONS
               ? MUTATIONS[K]
               : undefined),
-        >(type: HasDefinedAndNotAny<P> extends true ? never : K extends string ? K : never, payload?: HasDefinedAndNotAny<P> extends false ? undefined : never): void
+        >(type: HasDefinedAndNotAny<P> extends true ? never : K extends string ? K : never, payload?: HasDefinedAndNotAny<P> extends false ? P | undefined : never): void
 
         <
           MS extends FlattenMutations<
@@ -238,7 +238,7 @@ type StoreDispatch<MODULES, ACTIONS> =
             : K extends keyof ACTIONS
               ? ACTIONS[K]
               : undefined),
-        >(type: HasDefinedAndNotAny<P> extends true ? never : K, payload?: P): Promise<any>
+        >(type: HasDefinedAndNotAny<P> extends true ? never : K, payload?: HasDefinedAndNotAny<P> extends false ? P | undefined : never): Promise<any>
 
         <
           AS extends FlattenActions<
