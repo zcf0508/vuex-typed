@@ -10,13 +10,14 @@ import type { And, GetModulesKeys, HasDefinedAndNotAny, UnionToIntersection } fr
 import { IS_VUEX_3 } from './helper'
 
 interface ModuleCommit<MUTATIONS> {
-  <T extends keyof MUTATIONS, P extends (HasDefinedAndNotAny<MUTATIONS[T]> extends false ? undefined : never)>(type: T, payload?: P): void
-  <T extends keyof MUTATIONS>(type: T, payload: MUTATIONS[T]): void
+  <T extends keyof MUTATIONS, P extends MUTATIONS[T]>(type: HasDefinedAndNotAny<P> extends true ? never : T, payload?: undefined): void
+  <T extends keyof MUTATIONS, P extends MUTATIONS[T]>(type: T, payload: HasDefinedAndNotAny<P> extends true ? P : undefined): void
   <T extends keyof MUTATIONS>(input: { type: T } & MUTATIONS[T]): void
 }
 
 interface ModuleDispatch<ACTIONS> {
-  <T extends keyof ACTIONS>(type: T, payload: ACTIONS[T]): Promise<any>
+  <T extends keyof ACTIONS, P extends ACTIONS[T]>(type: HasDefinedAndNotAny<P> extends true ? never : T, payload?: undefined): Promise<any>
+  <T extends keyof ACTIONS, P extends ACTIONS[T]>(type: T, payload: HasDefinedAndNotAny<P> extends true ? P : undefined): Promise<any>
   <T extends keyof ACTIONS>(input: { type: T } & ACTIONS[T]): Promise<any>
 }
 
@@ -179,15 +180,29 @@ type StoreCommit<MODULES, MUTATIONS> =
             MODULES extends Modules ? MODULES : never
           >,
           K extends keyof (MS & MUTATIONS),
-        >(type: K extends string ? K : never, payload:
-          K extends keyof MS
+          P extends (K extends keyof MS
             ? MS[K] extends (...args: any) => any
               ? Parameters<MS[K]>[1]
               : undefined
             : K extends keyof MUTATIONS
               ? MUTATIONS[K]
+              : undefined),
+        >(type: HasDefinedAndNotAny<P> extends true ? never : K extends string ? K : never, payload?: HasDefinedAndNotAny<P> extends false ? undefined : never): void
+
+        <
+          MS extends FlattenMutations<
+            MODULES extends Modules ? MODULES : never
+          >,
+          K extends keyof (MS & MUTATIONS),
+          P extends (K extends keyof MS
+            ? MS[K] extends (...args: any) => any
+              ? Parameters<MS[K]>[1]
               : undefined
-          ): void
+            : K extends keyof MUTATIONS
+              ? MUTATIONS[K]
+              : undefined),
+        >(type: K extends string ? K : never, payload: HasDefinedAndNotAny<P> extends true ? P : never): void
+
         <
         MS extends FlattenMutations<
           MODULES extends Modules ? MODULES : never
@@ -210,34 +225,49 @@ type StoreCommit<MODULES, MUTATIONS> =
 
 type StoreDispatch<MODULES, ACTIONS> =
   (MODULES[keyof MODULES] extends ModuleInstance
-    ? { <
+    ? {
+        <
           AS extends FlattenActions<
           MODULES extends Modules ? MODULES : never
         >,
           K extends keyof (AS & ACTIONS),
-        >(type: K, payload:
-        K extends keyof AS
-          ? AS[K] extends (...args: any) => any
-            ? Parameters<AS[K]>[1]
-            : undefined
-          : K extends keyof ACTIONS
-            ? ACTIONS[K]
-            : undefined
-        ): Promise<any>
+          P extends (K extends keyof AS
+            ? AS[K] extends (...args: any) => any
+              ? Parameters<AS[K]>[1]
+              : undefined
+            : K extends keyof ACTIONS
+              ? ACTIONS[K]
+              : undefined),
+        >(type: HasDefinedAndNotAny<P> extends true ? never : K, payload?: P): Promise<any>
+
+        <
+          AS extends FlattenActions<
+          MODULES extends Modules ? MODULES : never
+        >,
+          K extends keyof (AS & ACTIONS),
+          P extends (K extends keyof AS
+            ? AS[K] extends (...args: any) => any
+              ? Parameters<AS[K]>[1]
+              : undefined
+            : K extends keyof ACTIONS
+              ? ACTIONS[K]
+              : undefined),
+        >(type: K, payload: HasDefinedAndNotAny<P> extends true ? P : undefined): Promise<any>
+
         <
           AS extends FlattenActions<
           MODULES extends Modules ? MODULES : never
         >,
           K extends keyof (AS & ACTIONS),
         >(input: { type: K } & (
-      K extends keyof AS
-        ? AS[K] extends (...args: any) => any
-          ? Parameters<AS[K]>[1]
-          : {}
-        : K extends keyof ACTIONS
-          ? ACTIONS[K]
-          : {}
-    )): Promise<any>
+          K extends keyof AS
+            ? AS[K] extends (...args: any) => any
+              ? Parameters<AS[K]>[1]
+              : {}
+            : K extends keyof ACTIONS
+              ? ACTIONS[K]
+              : {}
+        )): Promise<any>
       }
     : {
       <T extends keyof ACTIONS>(type: T, payload: ACTIONS[T]): Promise<any>

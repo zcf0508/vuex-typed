@@ -107,8 +107,9 @@ describe('vuex', () => {
         },
       },
       actions: {
-        setAge({ commit }, age: number) {
+        setAge({ commit, dispatch }, age: number) {
           commit('SET_AGE', age)
+          dispatch('addAge')
         },
         addAge({ commit }) {
           commit('Add_AGE')
@@ -144,8 +145,9 @@ describe('vuex', () => {
             },
           },
           actions: {
-            update({ commit }, payload: undefined) {
+            update({ commit, dispatch }) {
               commit('UPDATE', '2')
+              dispatch('add_b')
             },
             update2({ commit }, payload: string) {
               commit('UPDATE', payload)
@@ -167,7 +169,7 @@ describe('vuex', () => {
             },
           },
           actions: {
-            update2({ commit }, payload: undefined) {
+            update2({ commit }) {
               commit('UPDATE', '2')
             },
           },
@@ -202,9 +204,9 @@ describe('vuex', () => {
     testStore2.commit('m1/UPDATE2', 2)
 
     testStore2.dispatch('setName', '333')
-    testStore2.dispatch('m1/update', undefined)
+    testStore2.dispatch('m1/update')
     testStore2.dispatch('m1/update2', '2')
-    testStore2.dispatch('update2', undefined)
+    testStore2.dispatch('update2')
 
     expect(testStore2.getters.username).toBe('333')
 
