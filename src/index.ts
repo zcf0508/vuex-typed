@@ -417,15 +417,15 @@ interface MapActions<ACTIONS, MODULES> {
     MODULES_KEYS extends keyof MODULES, MAP extends Record<string, keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? PickNSModuleActions<MODULES[MODULES_KEYS]> : never)>,
   >(namespace: MODULES_KEYS, map: MAP): {
     [K in keyof MAP]: HasDefinedAndNotAny<MAP[K] extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[MAP[K]] : never> extends true
-      ? (payload: MAP[K] extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[MAP[K]] : never) => void
-      : (payload?: (MAP[K] extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[MAP[K]] : never) | undefined) => void
+      ? (payload: MAP[K] extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[MAP[K]] : never) => any
+      : (payload?: (MAP[K] extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[MAP[K]] : never) | undefined) => any
   }
   <
     MODULES_KEYS extends keyof MODULES, ALL_KEYS extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? PickNSModuleActions<MODULES[MODULES_KEYS]> : never), MAP_ITEM extends string,
   >(namespace: MODULES_KEYS, map: MAP_ITEM[]): {
     [K in MAP_ITEM extends ALL_KEYS ? MAP_ITEM : never]: HasDefinedAndNotAny<K extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[K] : never> extends true
-      ? (payload: K extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[K] : never) => void
-      : (payload?: (K extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[K] : never) | undefined) => void
+      ? (payload: K extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[K] : never) => any
+      : (payload?: (K extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[K] : never) | undefined) => any
   }
 }
 
