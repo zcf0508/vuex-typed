@@ -16,11 +16,17 @@ const { store, mapGetters, mapMutations, mapActions, mapState } = defineStore({
     count: countModule,
   },
   mutations: {
+    SET_G_USERNAME_DEFAULT(state) {
+      state.gUsername = 'defoult'
+    },
     SET_G_USERNAME(state, payload: string) {
       state.gUsername = payload
     },
   },
   actions: {
+    setGUsernameDefault({ commit }) {
+      commit('SET_G_USERNAME_DEFAULT')
+    },
     setGUsername({ commit }, payload: string) {
       commit('SET_G_USERNAME', payload)
     },
@@ -262,14 +268,18 @@ describe('vuex', () => {
         }),
       },
       methods: {
-        ...mapMutations(['SET_NAME', 'SET_G_USERNAME']),
+        ...mapMutations(['SET_NAME', 'ADD_AGE', 'SET_G_USERNAME_DEFAULT', 'SET_G_USERNAME']),
         ...mapMutations({
           NEW_SET_G_USERNAME: 'SET_G_USERNAME',
+          NEW_SET_NAME: 'SET_NAME',
+          NEW_ADD_AGE: 'ADD_AGE',
+          NEW_SET_G_USERNAME_DEFAULT: 'SET_G_USERNAME_DEFAULT',
         }),
         ...mapMutations('count', {
           NEW_SET_NUM: 'SET_NUM',
+          NEW_ADD_NUM: 'ADD_NUM',
         }),
-        ...mapMutations('count', ['SET_NUM']),
+        ...mapMutations('count', ['SET_NUM', 'ADD_NUM']),
       },
     }))
 
@@ -280,10 +290,16 @@ describe('vuex', () => {
     assertType<string>(vm.gUsername)
     assertType<number>(vm.double)
     assertType<(p: string) => any>(vm.SET_NAME)
-    assertType<(p: number) => any>(vm.NEW_SET_NUM)
+    assertType<(p: string) => any>(vm.NEW_SET_NAME)
     assertType<(p: number) => any>(vm.SET_NUM)
     assertType<(p: string) => any>(vm.NEW_SET_G_USERNAME)
     assertType<(p: string) => any>(vm.SET_G_USERNAME)
+    assertType<(p?: unknown) => any>(vm.SET_G_USERNAME_DEFAULT)
+    assertType<(p?: unknown) => any>(vm.ADD_AGE)
+    assertType<(p?: unknown) => any>(vm.NEW_ADD_AGE)
+    assertType<(p?: unknown) => any>(vm.NEW_SET_G_USERNAME_DEFAULT)
+    assertType<(p?: unknown) => any>(vm.NEW_ADD_NUM)
+    assertType<(p?: unknown) => any>(vm.ADD_NUM)
 
     vm.SET_NAME('222')
     expect(vm.username).toBe('222')
@@ -316,14 +332,17 @@ describe('vuex', () => {
         ...mapMutations('count', {
           SET_NUM: 'SET_NUM',
         }),
-        ...mapActions(['setName', 'setGUsername']),
+        ...mapActions(['setName', 'addAge', 'setGUsername', 'setGUsernameDefault']),
         ...mapActions({
+          newAddAge: 'addAge',
           newSetGUsername: 'setGUsername',
+          newSetGUsernameDefault: 'setGUsernameDefault',
         }),
         ...mapActions('count', {
           newAdd: 'add',
+          newAddNum: 'addNum',
         }),
-        ...mapActions('count', ['add']),
+        ...mapActions('count', ['add', 'addNum']),
       },
     }))
 

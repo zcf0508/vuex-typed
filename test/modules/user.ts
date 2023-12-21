@@ -9,6 +9,9 @@ export const userModule = defineModule({
     SET_AGE(state, age: number) {
       state.uage = age
     },
+    ADD_AGE(state) {
+      state.uage++
+    },
     SET_NAME(state, payload: string) {
       state.uname = payload
     },
@@ -20,6 +23,9 @@ export const userModule = defineModule({
   actions: {
     setAge({ commit }, age: number) {
       commit('SET_AGE', age)
+    },
+    addAge({ commit }) {
+      commit('ADD_AGE')
     },
     setName({ commit }, payload: string) {
       commit('SET_NAME', payload)

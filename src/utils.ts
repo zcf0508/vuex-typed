@@ -10,6 +10,7 @@ type Equal<Left, Right> =
   (<U>() => U extends Left ? 1 : 0) extends (<U>() => U extends Right ? 1 : 0) ? true : false
 
 type IsAny<T> = Equal<T, any> extends true ? true : false
+export type IsNever<T> = Equal<T, never> extends true ? true : false
 
 export type HasDefinedAndNotAny<T> =
   IsAny<T> extends true
