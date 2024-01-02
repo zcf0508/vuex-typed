@@ -51,7 +51,7 @@
     "release": "bumpp",
     "start": "esno src/index.ts",
     "test": "vitest ./test/index4",
-    "test:once": "vitest run ./test/index4",
+    "test:once": "vitest run ./test/index4 & tsc ./test/index4.test.ts --noEmit",
     "typecheck": "tsc --noEmit",
     "play": "npm -C playground/vue3 run dev"
   },
@@ -61,7 +61,6 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.8",
-    "@antfu/ni": "^0.21.5",
     "@antfu/utils": "^0.7.5",
     "@types/node": "^20.4.5",
     "bumpp": "^9.1.1",
@@ -71,10 +70,10 @@
     "pnpm": "^8.6.10",
     "rimraf": "^5.0.1",
     "simple-git-hooks": "^2.9.0",
-    "typescript": "^5.1.6",
+    "typescript": "^4.8.4",
     "unbuild": "^1.2.1",
     "vite": "^4.4.7",
-    "vitest": "^1.1.0",
+    "vitest": "^0.34.6",
     "vue": "^3.0.2",
     "vuex": "4.0.0"
   },

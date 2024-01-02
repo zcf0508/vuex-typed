@@ -11,5 +11,6 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["playground", "node_modules"]
 }
