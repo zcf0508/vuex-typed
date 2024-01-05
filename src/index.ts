@@ -6,17 +6,17 @@ import Vuex, {
 } from 'vuex'
 import type { ActionContext, Store as VuexStore } from 'vuex'
 import type { ComputedGetter } from 'vue'
-import type { And, GetModulesKeys, HasDefinedAndNotAny, UnionToIntersection } from './utils'
+import type { And, GetModulesKeys, HasDefinedAndNotAny, HasDefinedAndNotAnyAndNonOptional, UnionToIntersection } from './utils'
 import { IS_VUEX_3 } from './helper'
 
 interface ModuleCommit<MUTATIONS> {
-  <T extends keyof MUTATIONS, P extends MUTATIONS[T]>(type: HasDefinedAndNotAny<P> extends true ? never : T, payload?: undefined): void
+  <T extends keyof MUTATIONS, P extends MUTATIONS[T]>(type: HasDefinedAndNotAny<P> extends true ? never : T, payload?: P | undefined): void
   <T extends keyof MUTATIONS, P extends MUTATIONS[T]>(type: T, payload: HasDefinedAndNotAny<P> extends true ? P : undefined): void
   <T extends keyof MUTATIONS>(input: { type: T } & MUTATIONS[T]): void
 }
 
 interface ModuleDispatch<ACTIONS> {
-  <T extends keyof ACTIONS, P extends ACTIONS[T]>(type: HasDefinedAndNotAny<P> extends true ? never : T, payload?: undefined): Promise<any>
+  <T extends keyof ACTIONS, P extends ACTIONS[T]>(type: HasDefinedAndNotAny<P> extends true ? never : T, payload?: P | undefined): Promise<any>
   <T extends keyof ACTIONS, P extends ACTIONS[T]>(type: T, payload: HasDefinedAndNotAny<P> extends true ? P : undefined): Promise<any>
   <T extends keyof ACTIONS>(input: { type: T } & ACTIONS[T]): Promise<any>
 }
@@ -187,7 +187,7 @@ type StoreCommit<MODULES, MUTATIONS> =
             : K extends keyof MUTATIONS
               ? MUTATIONS[K]
               : undefined),
-        >(type: HasDefinedAndNotAny<P> extends true ? never : K extends string ? K : never, payload?: HasDefinedAndNotAny<P> extends false ? P | undefined : never): void
+        >(type: HasDefinedAndNotAnyAndNonOptional<P> extends true ? never : K extends string ? K : never, payload?: HasDefinedAndNotAny<P> extends false ? P | undefined : never): void
 
         <
           MS extends FlattenMutations<
@@ -234,11 +234,11 @@ type StoreDispatch<MODULES, ACTIONS> =
           P extends (K extends keyof AS
             ? AS[K] extends (...args: any) => any
               ? Parameters<AS[K]>[1]
-              : undefined
+              : never
             : K extends keyof ACTIONS
               ? ACTIONS[K]
-              : undefined),
-        >(type: HasDefinedAndNotAny<P> extends true ? never : K, payload?: HasDefinedAndNotAny<P> extends false ? P | undefined : never): Promise<any>
+              : never),
+        >(type: HasDefinedAndNotAnyAndNonOptional<P> extends true ? never : K, payload?: P | undefined): Promise<any>
 
         <
           AS extends FlattenActions<
@@ -363,14 +363,14 @@ interface MapMutations<MUTATIONS, MODULES> {
   >(namespace: MODULES_KEYS, map: MAP): {
     [K in keyof MAP]: HasDefinedAndNotAny<MAP[K] extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[MAP[K]] : never> extends true
       ? (payload: MAP[K] extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[MAP[K]] : never) => void
-      : (payload?: (MAP[K] extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[MAP[K]] : never) | undefined) => void
+      : (payload?: (MAP[K] extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[MAP[K]] | undefined : never) | undefined) => void
   }
   <
     MODULES_KEYS extends keyof MODULES, ALL_KEYS extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]> : never), MAP_ITEM extends string,
   >(namespace: MODULES_KEYS, map: MAP_ITEM[]): {
     [K in MAP_ITEM extends ALL_KEYS ? MAP_ITEM : never]: HasDefinedAndNotAny<K extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[K] : never> extends true
       ? (payload: K extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[K] : never) => void
-      : (payload?: (K extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[K] : never) | undefined) => void
+      : (payload?: (K extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[K] | undefined : never) | undefined) => void
   }
 }
 
@@ -418,14 +418,14 @@ interface MapActions<ACTIONS, MODULES> {
   >(namespace: MODULES_KEYS, map: MAP): {
     [K in keyof MAP]: HasDefinedAndNotAny<MAP[K] extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[MAP[K]] : never> extends true
       ? (payload: MAP[K] extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[MAP[K]] : never) => any
-      : (payload?: (MAP[K] extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[MAP[K]] : never) | undefined) => any
+      : (payload?: (MAP[K] extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[MAP[K]] | undefined : never) | undefined) => any
   }
   <
     MODULES_KEYS extends keyof MODULES, ALL_KEYS extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? PickNSModuleActions<MODULES[MODULES_KEYS]> : never), MAP_ITEM extends string,
   >(namespace: MODULES_KEYS, map: MAP_ITEM[]): {
     [K in MAP_ITEM extends ALL_KEYS ? MAP_ITEM : never]: HasDefinedAndNotAny<K extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[K] : never> extends true
       ? (payload: K extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[K] : never) => any
-      : (payload?: (K extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[K] : never) | undefined) => any
+      : (payload?: (K extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[K] | undefined : never) | undefined) => any
   }
 }
 

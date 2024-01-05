@@ -140,8 +140,8 @@ describe('vuex', () => {
           namespaced: true,
           state: { a: '1', b: 2 },
           mutations: {
-            UPDATE(state, payload: string) {
-              state.a = payload
+            UPDATE(state, payload?: string) {
+              state.a = payload || ''
             },
             UPDATE2(state, payload: number) {
               state.b = payload
@@ -155,7 +155,7 @@ describe('vuex', () => {
               commit('UPDATE', '2')
               dispatch('add_b')
             },
-            update2({ commit }, payload: string) {
+            update2({ commit }, payload?: string) {
               commit('UPDATE', payload)
             },
             add_b({ commit }) {
@@ -207,10 +207,13 @@ describe('vuex', () => {
     expect(testStore2.getters.username).toBe('333')
 
     testStore2.commit('SET_NAME', '222')
+    testStore2.commit('m1/UPDATE')
+    testStore2.commit('m1/UPDATE', '333')
     testStore2.commit('m1/UPDATE2', 2)
 
     testStore2.dispatch('setName', '333')
     testStore2.dispatch('m1/update')
+    testStore2.dispatch('m1/update2')
     testStore2.dispatch('m1/update2', '2')
     testStore2.dispatch('update2')
 
