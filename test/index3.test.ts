@@ -19,15 +19,15 @@ const { store, mapGetters, mapMutations, mapActions, mapState } = defineStore({
     SET_G_USERNAME_DEFAULT(state) {
       state.gUsername = 'defoult'
     },
-    SET_G_USERNAME(state, payload: string) {
-      state.gUsername = payload
+    SET_G_USERNAME(state, payload?: string) {
+      state.gUsername = payload || ''
     },
   },
   actions: {
     setGUsernameDefault({ commit }) {
       commit('SET_G_USERNAME_DEFAULT')
     },
-    setGUsername({ commit }, payload: string) {
+    setGUsername({ commit }, payload?: string) {
       commit('SET_G_USERNAME', payload)
     },
   },
@@ -295,8 +295,8 @@ describe('vuex', () => {
     assertType<(p: string) => any>(vm.SET_NAME)
     assertType<(p: string) => any>(vm.NEW_SET_NAME)
     assertType<(p: number) => any>(vm.SET_NUM)
-    assertType<(p: string) => any>(vm.NEW_SET_G_USERNAME)
-    assertType<(p: string) => any>(vm.SET_G_USERNAME)
+    assertType<(p?: string) => any>(vm.NEW_SET_G_USERNAME)
+    assertType<(p?: string) => any>(vm.SET_G_USERNAME)
     assertType<(p?: unknown) => any>(vm.SET_G_USERNAME_DEFAULT)
     assertType<(p?: unknown) => any>(vm.ADD_AGE)
     assertType<(p?: unknown) => any>(vm.NEW_ADD_AGE)
@@ -358,8 +358,8 @@ describe('vuex', () => {
     assertType<number>(vm.newDouble)
     assertType<number>(vm.double)
     assertType<(p: string) => any>(vm.setName)
-    assertType<(p: string) => any>(vm.setGUsername)
-    assertType<(p: string) => any>(vm.newSetGUsername)
+    assertType<(p?: string) => any>(vm.setGUsername)
+    assertType<(p?: string) => any>(vm.newSetGUsername)
     assertType<(p: number) => any>(vm.SET_NUM)
     assertType<(p: number) => any>(vm.newAdd)
     assertType<(p: number) => any>(vm.add)

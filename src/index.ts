@@ -332,11 +332,11 @@ interface MapMutations<MUTATIONS, MODULES> {
   >(map: MAP): {
     [K in keyof MAP]:
     MAP[K] extends MODULE_MUTATIONS_KEYS
-      ? HasDefinedAndNotAny<MAP[K] extends keyof UnionToIntersection<MM> ? UnionToIntersection<MM>[MAP[K]] : never> extends true
+      ? HasDefinedAndNotAnyAndNonOptional<MAP[K] extends keyof UnionToIntersection<MM> ? UnionToIntersection<MM>[MAP[K]] : never> extends true
         ? (payload: MAP[K] extends keyof UnionToIntersection<MM> ? UnionToIntersection<MM>[MAP[K]] : never) => void
         : (payload?: (MAP[K] extends keyof UnionToIntersection<MM> ? UnionToIntersection<MM>[MAP[K]] : never) | undefined) => void
       : MAP[K] extends MUTATIONS_KEYS
-        ? HasDefinedAndNotAny<MUTATIONS[MAP[K]]> extends true
+        ? HasDefinedAndNotAnyAndNonOptional<MUTATIONS[MAP[K]]> extends true
           ? (payload: MUTATIONS[MAP[K]]) => void
           : (payload?: MUTATIONS[MAP[K]] | undefined) => void
         : never
@@ -348,11 +348,11 @@ interface MapMutations<MUTATIONS, MODULES> {
   >(map: KEY_ITEM[]): {
     [K in KEY_ITEM extends MODULE_MUTATIONS_KEYS | MUTATIONS_KEYS ? KEY_ITEM : never]:
     K extends MODULE_MUTATIONS_KEYS
-      ? HasDefinedAndNotAny<K extends keyof UnionToIntersection<MM> ? UnionToIntersection<MM>[K] : never> extends true
+      ? HasDefinedAndNotAnyAndNonOptional<K extends keyof UnionToIntersection<MM> ? UnionToIntersection<MM>[K] : never> extends true
         ? (payload: K extends keyof UnionToIntersection<MM> ? UnionToIntersection<MM>[K] : never) => void
         : (payload?: (K extends keyof UnionToIntersection<MM> ? UnionToIntersection<MM>[K] : never) | undefined) => void
       : K extends MUTATIONS_KEYS
-        ? HasDefinedAndNotAny<MUTATIONS[K]> extends true
+        ? HasDefinedAndNotAnyAndNonOptional<MUTATIONS[K]> extends true
           ? (payload: MUTATIONS[K]) => void
           : (payload?: MUTATIONS[K] | undefined) => void
         : never
@@ -361,14 +361,14 @@ interface MapMutations<MUTATIONS, MODULES> {
   <
     MODULES_KEYS extends keyof MODULES, MAP extends Record<string, keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]> : never)>,
   >(namespace: MODULES_KEYS, map: MAP): {
-    [K in keyof MAP]: HasDefinedAndNotAny<MAP[K] extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[MAP[K]] : never> extends true
+    [K in keyof MAP]: HasDefinedAndNotAnyAndNonOptional<MAP[K] extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[MAP[K]] : never> extends true
       ? (payload: MAP[K] extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[MAP[K]] : never) => void
       : (payload?: (MAP[K] extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[MAP[K]] | undefined : never) | undefined) => void
   }
   <
     MODULES_KEYS extends keyof MODULES, ALL_KEYS extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]> : never), MAP_ITEM extends string,
   >(namespace: MODULES_KEYS, map: MAP_ITEM[]): {
-    [K in MAP_ITEM extends ALL_KEYS ? MAP_ITEM : never]: HasDefinedAndNotAny<K extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[K] : never> extends true
+    [K in MAP_ITEM extends ALL_KEYS ? MAP_ITEM : never]: HasDefinedAndNotAnyAndNonOptional<K extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[K] : never> extends true
       ? (payload: K extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[K] : never) => void
       : (payload?: (K extends keyof PickNSModuleMutaions<MODULES[MODULES_KEYS]> ? PickNSModuleMutaions<MODULES[MODULES_KEYS]>[K] | undefined : never) | undefined) => void
   }
@@ -387,11 +387,11 @@ interface MapActions<ACTIONS, MODULES> {
   >(map: KEY_ITEM[]): {
     [K in KEY_ITEM extends MODULE_ACTIONS_KEYS | ACTIONS_KEYS ? KEY_ITEM : never]:
     K extends MODULE_ACTIONS_KEYS
-      ? HasDefinedAndNotAny<K extends keyof UnionToIntersection<MA> ? UnionToIntersection<MA>[K] : never> extends true
+      ? HasDefinedAndNotAnyAndNonOptional<K extends keyof UnionToIntersection<MA> ? UnionToIntersection<MA>[K] : never> extends true
         ? (payload: K extends keyof UnionToIntersection<MA> ? UnionToIntersection<MA>[K] : never) => any
         : (payload?: (K extends keyof UnionToIntersection<MA> ? UnionToIntersection<MA>[K] : never) | undefined) => any
       : K extends ACTIONS_KEYS
-        ? HasDefinedAndNotAny<ACTIONS[K]> extends true
+        ? HasDefinedAndNotAnyAndNonOptional<ACTIONS[K]> extends true
           ? (payload: ACTIONS[K]) => any
           : (payload?: ACTIONS[K] | undefined) => any
         : never
@@ -403,11 +403,11 @@ interface MapActions<ACTIONS, MODULES> {
   >(map: MAP): {
     [K in keyof MAP]:
     MAP[K] extends MODULE_ACTIONS_KEYS
-      ? HasDefinedAndNotAny<MAP[K] extends keyof UnionToIntersection<MA> ? UnionToIntersection<MA>[MAP[K]] : never> extends true
+      ? HasDefinedAndNotAnyAndNonOptional<MAP[K] extends keyof UnionToIntersection<MA> ? UnionToIntersection<MA>[MAP[K]] : never> extends true
         ? (payload: MAP[K] extends keyof UnionToIntersection<MA> ? UnionToIntersection<MA>[MAP[K]] : never) => any
         : (payload?: (MAP[K] extends keyof UnionToIntersection<MA> ? UnionToIntersection<MA>[MAP[K]] : never) | undefined) => any
       : MAP[K] extends ACTIONS_KEYS
-        ? HasDefinedAndNotAny<ACTIONS[MAP[K]]> extends true
+        ? HasDefinedAndNotAnyAndNonOptional<ACTIONS[MAP[K]]> extends true
           ? (payload: ACTIONS[MAP[K]]) => any
           : (payload?: ACTIONS[MAP[K]] | undefined) => any
         : never
@@ -416,14 +416,14 @@ interface MapActions<ACTIONS, MODULES> {
   <
     MODULES_KEYS extends keyof MODULES, MAP extends Record<string, keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? PickNSModuleActions<MODULES[MODULES_KEYS]> : never)>,
   >(namespace: MODULES_KEYS, map: MAP): {
-    [K in keyof MAP]: HasDefinedAndNotAny<MAP[K] extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[MAP[K]] : never> extends true
+    [K in keyof MAP]: HasDefinedAndNotAnyAndNonOptional<MAP[K] extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[MAP[K]] : never> extends true
       ? (payload: MAP[K] extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[MAP[K]] : never) => any
       : (payload?: (MAP[K] extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[MAP[K]] | undefined : never) | undefined) => any
   }
   <
     MODULES_KEYS extends keyof MODULES, ALL_KEYS extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? PickNSModuleActions<MODULES[MODULES_KEYS]> : never), MAP_ITEM extends string,
   >(namespace: MODULES_KEYS, map: MAP_ITEM[]): {
-    [K in MAP_ITEM extends ALL_KEYS ? MAP_ITEM : never]: HasDefinedAndNotAny<K extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[K] : never> extends true
+    [K in MAP_ITEM extends ALL_KEYS ? MAP_ITEM : never]: HasDefinedAndNotAnyAndNonOptional<K extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[K] : never> extends true
       ? (payload: K extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[K] : never) => any
       : (payload?: (K extends keyof PickNSModuleActions<MODULES[MODULES_KEYS]> ? PickNSModuleActions<MODULES[MODULES_KEYS]>[K] | undefined : never) | undefined) => any
   }
