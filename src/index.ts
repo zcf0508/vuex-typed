@@ -6,18 +6,18 @@ import Vuex, {
 } from 'vuex'
 import type { ActionContext, Store as VuexStore } from 'vuex'
 import type { ComputedGetter } from 'vue'
-import type { And, GetModulesKeys, HasDefinedAndNotAny, HasDefinedAndNotAnyAndNonOptional, UnionToIntersection } from './utils'
+import type { And, GetModulesKeys, HasDefinedAndNotAny, HasDefinedAndNotAnyAndNonOptional, NoInfer, UnionToIntersection } from './utils'
 import { IS_VUEX_3 } from './helper'
 
 interface ModuleCommit<MUTATIONS> {
-  <T extends keyof MUTATIONS, P extends MUTATIONS[T]>(type: HasDefinedAndNotAny<P> extends true ? never : T, payload?: P | undefined): void
-  <T extends keyof MUTATIONS, P extends MUTATIONS[T]>(type: T, payload: HasDefinedAndNotAny<P> extends true ? P : undefined): void
+  <T extends keyof MUTATIONS, P extends MUTATIONS[T]>(type: HasDefinedAndNotAnyAndNonOptional<NoInfer<P>> extends true ? never : T, payload?: NoInfer<P> | undefined): void
+  <T extends keyof MUTATIONS, P extends MUTATIONS[T]>(type: T, payload: HasDefinedAndNotAnyAndNonOptional<NoInfer<P>> extends true ? NoInfer<P> : undefined): void
   <T extends keyof MUTATIONS>(input: { type: T } & MUTATIONS[T]): void
 }
 
 interface ModuleDispatch<ACTIONS> {
-  <T extends keyof ACTIONS, P extends ACTIONS[T]>(type: HasDefinedAndNotAny<P> extends true ? never : T, payload?: P | undefined): Promise<any>
-  <T extends keyof ACTIONS, P extends ACTIONS[T]>(type: T, payload: HasDefinedAndNotAny<P> extends true ? P : undefined): Promise<any>
+  <T extends keyof ACTIONS, P extends ACTIONS[T]>(type: HasDefinedAndNotAnyAndNonOptional<NoInfer<P>> extends true ? never : T, payload?: NoInfer<P> | undefined): Promise<any>
+  <T extends keyof ACTIONS, P extends ACTIONS[T]>(type: T, payload: HasDefinedAndNotAnyAndNonOptional<NoInfer<P>> extends true ? NoInfer<P> : undefined): Promise<any>
   <T extends keyof ACTIONS>(input: { type: T } & ACTIONS[T]): Promise<any>
 }
 
@@ -64,24 +64,24 @@ export function defineModule<
     /**
      * @param payload Pass `undefined` when no parameters are required
      */
-    (state: STATE, payload: HasDefinedAndNotAny<MUTATIONS[K]> extends true ? MUTATIONS[K] : undefined) => void }
+    (state: NoInfer<STATE>, payload: MUTATIONS[K]) => void }
   actions?: {
     /**
      * @param ctx not support `rootState` and `rootGetters`
      * @param payload Pass `undefined` when no parameters are required, and
      */
     [K in keyof ACTIONS]: <
-      DISPATCH extends ModuleDispatch<ACTIONS>, ACTIONGETTERS extends GETTERS,
-    >(injectee: Omit<ActionContext<STATE, unknown>, 'state' | 'commit' | 'dispatch' | 'getters'> & {
-      state: STATE
-      commit: ModuleCommit<MUTATIONS>
+      DISPATCH extends ModuleDispatch<NoInfer<ACTIONS>>, ACTIONGETTERS extends NoInfer<GETTERS>,
+    >(injectee: Omit<ActionContext<NoInfer<STATE>, unknown>, 'state' | 'commit' | 'dispatch' | 'getters'> & {
+      state: NoInfer<STATE>
+      commit: ModuleCommit<NoInfer<MUTATIONS>>
       dispatch: DISPATCH
       getters: ACTIONGETTERS
-    }, payload: HasDefinedAndNotAny<ACTIONS[K]> extends true ? ACTIONS[K] : undefined) => any
+    }, payload: ACTIONS[K]) => any
   }
   getters?: {
     /** not support `rootState` and `rootGetters` */
-    [K in keyof GETTERS]: <LGS extends GETTERS>(state: STATE, getters: LGS) => GETTERS[K]
+    [K in keyof GETTERS]: <LGS extends GETTERS>(state: NoInfer<STATE>, getters: LGS) => GETTERS[K]
   }
   // modules?: NS extends true
   //     ? MDS extends Record<string, NSModule<any,any,any,any, any>>
@@ -187,7 +187,7 @@ type StoreCommit<MODULES, MUTATIONS> =
             : K extends keyof MUTATIONS
               ? MUTATIONS[K]
               : undefined),
-        >(type: HasDefinedAndNotAnyAndNonOptional<P> extends true ? never : K extends string ? K : never, payload?: HasDefinedAndNotAny<P> extends false ? P | undefined : never): void
+        >(type: HasDefinedAndNotAnyAndNonOptional<NoInfer<P>> extends true ? never : K extends string ? K : never, payload?: HasDefinedAndNotAny<NoInfer<P>> extends false ? NoInfer<P> | undefined : never): void
 
         <
           MS extends FlattenMutations<
@@ -201,7 +201,7 @@ type StoreCommit<MODULES, MUTATIONS> =
             : K extends keyof MUTATIONS
               ? MUTATIONS[K]
               : undefined),
-        >(type: K extends string ? K : never, payload: HasDefinedAndNotAny<P> extends true ? P : never): void
+        >(type: K extends string ? K : never, payload: HasDefinedAndNotAny<NoInfer<P>> extends true ? NoInfer<P> : never): void
 
         <
         MS extends FlattenMutations<
@@ -238,7 +238,7 @@ type StoreDispatch<MODULES, ACTIONS> =
             : K extends keyof ACTIONS
               ? ACTIONS[K]
               : never),
-        >(type: HasDefinedAndNotAnyAndNonOptional<P> extends true ? never : K, payload?: P | undefined): Promise<any>
+        >(type: HasDefinedAndNotAnyAndNonOptional<NoInfer<P>> extends true ? never : K, payload?: NoInfer<P> | undefined): Promise<any>
 
         <
           AS extends FlattenActions<
@@ -252,7 +252,7 @@ type StoreDispatch<MODULES, ACTIONS> =
             : K extends keyof ACTIONS
               ? ACTIONS[K]
               : undefined),
-        >(type: K, payload: HasDefinedAndNotAny<P> extends true ? P : undefined): Promise<any>
+        >(type: K, payload: HasDefinedAndNotAny<NoInfer<P>> extends true ? NoInfer<P> : undefined): Promise<any>
 
         <
           AS extends FlattenActions<
@@ -512,21 +512,21 @@ export function defineStore<
     /**
      * @param payload Pass `undefined` when no parameters are required
      */
-    (state: ROOTSTATE, payload: HasDefinedAndNotAny<MUTATIONS[K]> extends true ? MUTATIONS[K] : undefined) => void }
+    (state: NoInfer<ROOTSTATE>, payload: MUTATIONS[K]) => void }
   actions?: {
     /**
      * @param payload Pass `undefined` when no parameters are required
      */
     [K in keyof ACTIONS]: <
-      DISPATCH extends StoreDispatch<MODULES, ACTIONS>, ACTIONGETTERS extends GETTERS,
-    >(injectee: Omit<ActionContext<ROOTSTATE, ROOTSTATE>, 'state' | 'commit' | 'dispatch' | 'getters'> & {
-      state: StoreState<MODULES, ROOTSTATE>
-      commit: StoreCommit<MODULES, MUTATIONS>
+      DISPATCH extends StoreDispatch<NoInfer<MODULES>, NoInfer<ACTIONS>>, ACTIONGETTERS extends NoInfer<GETTERS>,
+    >(injectee: Omit<ActionContext<NoInfer<ROOTSTATE>, NoInfer<ROOTSTATE>>, 'state' | 'commit' | 'dispatch' | 'getters'> & {
+      state: StoreState<NoInfer<MODULES>, NoInfer<ROOTSTATE>>
+      commit: StoreCommit<NoInfer<MODULES>, NoInfer<MUTATIONS>>
       dispatch: DISPATCH
       getters: ACTIONGETTERS
-    }, payload: HasDefinedAndNotAny<ACTIONS[K]> extends true ? ACTIONS[K] : undefined) => void
+    }, payload: ACTIONS[K]) => void
   }
-  getters?: { [K in keyof GETTERS]: (state: StoreState<MODULES, ROOTSTATE>) => GETTERS[K] }
+  getters?: { [K in keyof GETTERS]: (state: StoreState<NoInfer<MODULES>, NoInfer<ROOTSTATE>>) => GETTERS[K] }
 
 }, /** only vue2 use */_Vue?: any): StoreWrap<MODULES, ROOTSTATE, MUTATIONS, ACTIONS, GETTERS> {
   if (_Vue && IS_VUEX_3)

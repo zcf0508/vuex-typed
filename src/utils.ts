@@ -58,3 +58,12 @@ export type GetNSModulesKeys<T extends Record<string, ModuleInstance>, K extends
       : never
     : never
 }[keyof T]>
+
+/**
+ * https://stackoverflow.com/questions/56687668/a-way-to-disable-type-argument-inference-in-generics
+ *
+ * https://github.com/microsoft/TypeScript/pull/56794
+ *
+ * TODO: maybe remove this type after typescript 5.4 is released
+ */
+export type NoInfer<T> = [T][T extends any ? 0 : never]

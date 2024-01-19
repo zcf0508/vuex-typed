@@ -152,8 +152,11 @@ describe('vuex', () => {
           },
           actions: {
             update({ commit, dispatch }) {
+              commit('UPDATE')
               commit('UPDATE', '2')
               dispatch('add_b')
+              dispatch('update2')
+              return 2
             },
             update2({ commit }, payload?: string) {
               commit('UPDATE', payload)
