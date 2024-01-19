@@ -1,7 +1,7 @@
 {
   "name": "z-vuex-typed",
   "type": "module",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "packageManager": "pnpm@7.33.6",
   "description": "",
   "author": "zcf0508 <zcf0508@live.com>",
