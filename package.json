@@ -75,6 +75,9 @@
     "vuex": "3.6.2"
   },
   "pnpm": {
+    "overrides": {
+      "esbuild": "0.17.19"
+    },
     "patchedDependencies": {
       "vuex@3.6.2": "patches/vuex@3.6.2.patch"
     }

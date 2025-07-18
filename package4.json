@@ -58,7 +58,6 @@
     "eslint": "^8.45.0",
     "happy-dom": "10.11.2",
     "typescript": "^4.8.4",
-    "unbuild": "^1.2.1",
     "vitest": "0.34.6",
     "vue": "3.3.13",
     "vuex": "4.0.0"
