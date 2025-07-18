@@ -30,7 +30,7 @@ type GEN_STATE<T> = IsFunction<T> extends true ? ReturnType<T extends (...args: 
  */
 export interface Module<STATE, MUTATIONS, ACTIONS, GETTERS> {
   namespaced: false
-  state: STATE
+  state: GEN_STATE<STATE>
   mutations: { [K in keyof MUTATIONS]: (state: GEN_STATE<STATE>, payload: HasDefinedAndNotAny<MUTATIONS[K]> extends true ? MUTATIONS[K] : undefined) => void }
   actions: { [K in keyof ACTIONS]: (injectee: {
     state: GEN_STATE<STATE>
@@ -469,7 +469,7 @@ interface MapState<STATE, MODULES> {
   <
     MODULES_KEYS extends keyof MODULES, MAP extends Record<string, keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['state'] : never)>,
   >(namespace: MODULES_KEYS, map: MAP): {
-    [K in keyof MAP]: ComputedGetter<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['state'][MAP[K]] : never>
+    [K in keyof MAP]: ComputedGetter<MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? GEN_STATE<MODULES[MODULES_KEYS]['state']>[MAP[K]] : never>
   }
   <
     MODULES_KEYS extends keyof MODULES, ALL_KEYS extends keyof (MODULES[MODULES_KEYS] extends NSModule<any, any, any, any, any> ? MODULES[MODULES_KEYS]['state'] : never), MAP_ITEM extends string,
