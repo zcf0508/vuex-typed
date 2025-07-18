@@ -44,11 +44,6 @@
     "node": ">= 14.0.0"
   },
   "scripts": {
-    "build": "unbuild",
-    "dev": "unbuild --stub",
-    "lint": "eslint .",
-    "prepublishOnly": "npm run build",
-    "start": "esno src/index.ts",
     "test": "vitest ./test/index4",
     "test:once": "vitest run ./test/index4 & tsc ./test/index4.test.ts --noEmit",
     "typecheck": "tsc --noEmit",
@@ -59,11 +54,8 @@
     "vuex": ">=4.0.0"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.39.8",
-    "@antfu/utils": "^0.7.5",
     "@types/node": "20.4.5",
     "eslint": "^8.45.0",
-    "esno": "^0.17.0",
     "happy-dom": "10.11.2",
     "typescript": "^4.8.4",
     "unbuild": "^1.2.1",
