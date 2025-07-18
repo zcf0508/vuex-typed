@@ -67,3 +67,5 @@ export type GetNSModulesKeys<T extends Record<string, ModuleInstance>, K extends
  * TODO: maybe remove this type after typescript 5.4 is released
  */
 export type NoInfer<T> = [T][T extends any ? 0 : never]
+
+export type IsFunction<T> = T extends (...args: any[]) => any ? true : false

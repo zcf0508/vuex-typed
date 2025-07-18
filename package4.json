@@ -2,7 +2,6 @@
   "name": "z-vuex-typed",
   "type": "module",
   "version": "0.1.5",
-  "packageManager": "pnpm@7.33.6",
   "description": "",
   "author": "zcf0508 <zcf0508@live.com>",
   "license": "MIT",
@@ -41,7 +40,8 @@
     "src"
   ],
   "engines": {
-    "node": ">= 14.0.0"
+    "node": "20",
+    "pnpm": "9"
   },
   "scripts": {
     "build": "unbuild",

@@ -1,3 +1,4 @@
+/* eslint-disable vue/one-component-per-file */
 import { assertType, describe, expect, it } from 'vitest'
 import Vuex from 'vuex'
 import Vue, { defineComponent } from 'vue'
@@ -183,23 +184,201 @@ describe('vuex', () => {
             },
           },
         }),
+        m3: defineModule({
+          namespaced: true,
+          state: () => ({ a: '1', b: 2 }), // state is a function
+          mutations: {
+            UPDATE(state, payload?: string) {
+              state.a = payload || ''
+            },
+            UPDATE2(state, payload: number) {
+              state.b = payload
+            },
+            ADD_B(state) {
+              state.b++
+            },
+          },
+          actions: {
+            update({ commit, dispatch, state }) {
+              commit('UPDATE', state.a)
+              commit('UPDATE', '2')
+              dispatch('add_b')
+              dispatch('update2')
+              return 2
+            },
+            update2({ commit }, payload?: string) {
+              commit('UPDATE', payload)
+            },
+            add_b({ commit }) {
+              commit('ADD_B')
+            },
+          },
+          getters: {
+            nsga: state => state.a,
+            nsgb: state => state.b,
+          },
+        }),
       },
     }, Vue)
 
     const testStore2 = newStore.store
 
-    testStore2.dispatch
+    const newStore3 = defineStore({
+      state: () => ({ // state is a function
+        name: '123123',
+        age: 18,
+      }),
+      mutations: {
+        SET_AGE(state, age: number) {
+          state.age = age
+        },
+        Add_AGE(state, payload: unknown) {
+          state.age++
+        },
+        SET_NAME(state, payload: string) {
+          state.name = payload
+        },
+        SET_USER(state, user: { name: string; age: number }) {
+          state.name = user.name
+          state.age = user.age
+        },
+      },
+      actions: {
+        setAge({ commit, dispatch, state }, age: number) {
+          commit('SET_AGE', state.age)
+          commit('SET_AGE', age)
+          dispatch('addAge')
+        },
+        addAge({ commit }, payload: unknown) {
+          commit('Add_AGE', payload)
+        },
+        setName({ commit }, payload: string) {
+          commit('SET_NAME', payload)
+        },
+        setUser({ commit }, user: { name: string; age: number }) {
+          commit('SET_USER', user)
+        },
+      },
+      getters: {
+        username(state) {
+          return state.name
+        },
+        userinfo(state) {
+          return state
+        },
+      },
+      modules: {
+        m1: defineModule({
+          namespaced: true,
+          state: { a: '1', b: 2 },
+          mutations: {
+            UPDATE(state, payload?: string) {
+              state.a = payload || ''
+            },
+            UPDATE2(state, payload: number) {
+              state.b = payload
+            },
+            ADD_B(state) {
+              state.b++
+            },
+          },
+          actions: {
+            update({ commit, dispatch }) {
+              commit('UPDATE')
+              commit('UPDATE', '2')
+              dispatch('add_b')
+              dispatch('update2')
+              return 2
+            },
+            update2({ commit }, payload?: string) {
+              commit('UPDATE', payload)
+            },
+            add_b({ commit }) {
+              commit('ADD_B')
+            },
+          },
+          getters: {
+            nsga: state => state.a,
+            nsgb: state => state.b,
+          },
+        }),
+        m2: defineModule({
+          state: { a: '1' },
+          mutations: {
+            UPDATE(state, payload: string) {
+              state.a = payload
+            },
+          },
+          actions: {
+            update2({ commit }) {
+              commit('UPDATE', '2')
+            },
+          },
+        }),
+        m3: defineModule({
+          namespaced: true,
+          state: () => ({ a: '1', b: 2 }), // state is a function
+          mutations: {
+            UPDATE(state, payload?: string) {
+              state.a = payload || ''
+            },
+            UPDATE2(state, payload: number) {
+              state.b = payload
+            },
+            ADD_B(state) {
+              state.b++
+            },
+          },
+          actions: {
+            update({ commit, dispatch, state }) {
+              commit('UPDATE', state.a)
+              commit('UPDATE', '2')
+              dispatch('add_b')
+              dispatch('update2')
+              return 2
+            },
+            update2({ commit }, payload?: string) {
+              commit('UPDATE', payload)
+            },
+            add_b({ commit }) {
+              commit('ADD_B')
+            },
+          },
+          getters: {
+            nsga: state => state.a,
+            nsgb: state => state.b,
+          },
+        }),
+      },
+    }, Vue)
+
+    const testStore3 = newStore3.store
 
     assertType<string>(testStore2.getters.username)
     assertType<number>(testStore2.getters['m1/nsgb'])
+    assertType<string>(testStore2.getters['m3/nsga'])
     assertType<string>(testStore2.state.name)
+    assertType<string>(testStore2.state.m3.a)
+
+    assertType<string>(testStore3.getters.username)
+    assertType<number>(testStore3.getters['m1/nsgb'])
+    assertType<string>(testStore3.getters['m3/nsga'])
+    assertType<string>(testStore3.state.name)
+    assertType<string>(testStore3.state.m3.a)
 
     expect(testStore1.state.name).toBe(testStore2.state.name)
     expect(testStore1.getters.username).toBe(testStore2.getters.username)
 
+    expect(testStore1.state.name).toBe(testStore3.state.name)
+    expect(testStore1.getters.username).toBe(testStore3.getters.username)
+
     testStore2.commit('SET_NAME', '222')
 
     expect(testStore2.getters.username).toBe('222')
+
+    testStore3.commit('SET_NAME', '222')
+
+    expect(testStore3.getters.username).toBe('222')
 
     testStore2.commit({
       type: 'SET_USER' as const,
@@ -209,10 +388,23 @@ describe('vuex', () => {
 
     expect(testStore2.getters.username).toBe('333')
 
+    testStore3.commit({
+      type: 'SET_USER' as const,
+      name: '333',
+      age: 20,
+    })
+
+    expect(testStore3.getters.username).toBe('333')
+
     testStore2.commit('SET_NAME', '222')
     testStore2.commit('m1/UPDATE')
     testStore2.commit('m1/UPDATE', '333')
     testStore2.commit('m1/UPDATE2', 2)
+
+    testStore3.commit('SET_NAME', '222')
+    testStore3.commit('m1/UPDATE')
+    testStore3.commit('m1/UPDATE', '333')
+    testStore3.commit('m1/UPDATE2', 2)
 
     testStore2.dispatch('setName', '333')
     testStore2.dispatch('m1/update')
@@ -220,7 +412,15 @@ describe('vuex', () => {
     testStore2.dispatch('m1/update2', '2')
     testStore2.dispatch('update2')
 
+    testStore3.dispatch('setName', '333')
+    testStore3.dispatch('m1/update')
+    testStore3.dispatch('m1/update2')
+    testStore3.dispatch('m1/update2', '2')
+    testStore3.dispatch('update2')
+
     expect(testStore2.getters.username).toBe('333')
+
+    expect(testStore3.getters.username).toBe('333')
 
     testStore2.dispatch({
       type: 'setUser' as const,
@@ -228,7 +428,15 @@ describe('vuex', () => {
       age: 21,
     })
 
+    testStore3.dispatch({
+      type: 'setUser' as const,
+      name: '444',
+      age: 21,
+    })
+
     expect(testStore2.getters.username).toBe('444')
+
+    expect(testStore3.getters.username).toBe('444')
   })
 
   it('test mapGetters', () => {

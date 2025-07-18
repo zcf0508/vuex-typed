@@ -6,7 +6,7 @@ import Vuex, {
 } from 'vuex'
 import type { ActionContext, Store as VuexStore } from 'vuex'
 import type { ComputedGetter } from 'vue'
-import type { And, GetModulesKeys, HasDefinedAndNotAny, HasDefinedAndNotAnyAndNonOptional, NoInfer, UnionToIntersection } from './utils'
+import type { And, GetModulesKeys, HasDefinedAndNotAny, HasDefinedAndNotAnyAndNonOptional, IsFunction, NoInfer, UnionToIntersection } from './utils'
 import { IS_VUEX_3 } from './helper'
 
 interface ModuleCommit<MUTATIONS> {
@@ -21,20 +21,24 @@ interface ModuleDispatch<ACTIONS> {
   <T extends keyof ACTIONS>(input: { type: T } & ACTIONS[T]): Promise<any>
 }
 
+type STATE_VALUE = Record<string, any> | (() => Record<string, any>)
+
+type GEN_STATE<T> = IsFunction<T> extends true ? ReturnType<T extends (...args: any) => any ? T : never> : NoInfer<T>
+
 /**
  * Normal Module Instance
  */
 export interface Module<STATE, MUTATIONS, ACTIONS, GETTERS> {
   namespaced: false
-  state: STATE
-  mutations: { [K in keyof MUTATIONS]: (state: STATE, payload: HasDefinedAndNotAny<MUTATIONS[K]> extends true ? MUTATIONS[K] : undefined) => void }
+  state: GEN_STATE<STATE>
+  mutations: { [K in keyof MUTATIONS]: (state: GEN_STATE<STATE>, payload: HasDefinedAndNotAny<MUTATIONS[K]> extends true ? MUTATIONS[K] : undefined) => void }
   actions: { [K in keyof ACTIONS]: (injectee: {
-    state: STATE
+    state: GEN_STATE<STATE>
     commit: ModuleCommit<MUTATIONS>
     dispatch: ModuleDispatch<ACTIONS>
     getters: GETTERS
   }, payload: ACTIONS[K]) => void }
-  getters: { [K in keyof GETTERS]: (state: STATE) => GETTERS[K] }
+  getters: { [K in keyof GETTERS]: (state: GEN_STATE<STATE>) => GETTERS[K] }
   modules: never
 }
 
@@ -43,15 +47,15 @@ export interface Module<STATE, MUTATIONS, ACTIONS, GETTERS> {
  */
 export interface NSModule<STATE, MUTATIONS, ACTIONS, GETTERS, MODULES> {
   namespaced: true
-  state: STATE
-  mutations: { [K in keyof MUTATIONS]: (state: STATE, payload: HasDefinedAndNotAny<MUTATIONS[K]> extends true ? MUTATIONS[K] : undefined) => void }
+  state: GEN_STATE<STATE>
+  mutations: { [K in keyof MUTATIONS]: (state: GEN_STATE<STATE>, payload: HasDefinedAndNotAny<MUTATIONS[K]> extends true ? MUTATIONS[K] : undefined) => void }
   actions: { [K in keyof ACTIONS]: (injectee: {
-    state: STATE
+    state: GEN_STATE<STATE>
     commit: ModuleCommit<MUTATIONS>
     dispatch: ModuleDispatch<ACTIONS>
     getters: GETTERS
   }, payload: ACTIONS[K]) => void }
-  getters: { [K in keyof GETTERS]: (state: STATE) => GETTERS[K] }
+  getters: { [K in keyof GETTERS]: (state: GEN_STATE<STATE>) => GETTERS[K] }
   modules: MODULES
 }
 
@@ -64,7 +68,7 @@ export function defineModule<
     /**
      * @param payload Pass `undefined` when no parameters are required
      */
-    (state: NoInfer<STATE>, payload: MUTATIONS[K]) => void }
+    (state: GEN_STATE<STATE>, payload: MUTATIONS[K]) => void }
   actions?: {
     /**
      * @param ctx not support `rootState` and `rootGetters`
@@ -73,7 +77,7 @@ export function defineModule<
     [K in keyof ACTIONS]: <
       DISPATCH extends ModuleDispatch<NoInfer<ACTIONS>>, ACTIONGETTERS extends NoInfer<GETTERS>,
     >(injectee: Omit<ActionContext<NoInfer<STATE>, unknown>, 'state' | 'commit' | 'dispatch' | 'getters'> & {
-      state: NoInfer<STATE>
+      state: GEN_STATE<STATE>
       commit: ModuleCommit<NoInfer<MUTATIONS>>
       dispatch: DISPATCH
       getters: ACTIONGETTERS
@@ -81,7 +85,7 @@ export function defineModule<
   }
   getters?: {
     /** not support `rootState` and `rootGetters` */
-    [K in keyof GETTERS]: <LGS extends GETTERS>(state: NoInfer<STATE>, getters: LGS) => GETTERS[K]
+    [K in keyof GETTERS]: <LGS extends GETTERS>(state: GEN_STATE<STATE>, getters: LGS) => GETTERS[K]
   }
   // modules?: NS extends true
   //     ? MDS extends Record<string, NSModule<any,any,any,any, any>>
@@ -167,7 +171,7 @@ type FlattenActions<
 // ---
 
 type StoreState<MODULES, ROOTSTATE> = Readonly<
-    & { [K in keyof MODULES]: MODULES[K] extends ModuleInstance ? MODULES[K]['state'] : never }
+    & { [K in keyof MODULES]: MODULES[K] extends ModuleInstance ? GEN_STATE<MODULES[K]['state']> : never }
     & { [K in keyof ROOTSTATE]: ROOTSTATE[K] }
 >
 
@@ -479,7 +483,7 @@ interface MapState<STATE, MODULES> {
 type StoreInstance<
   MODULES, ROOTSTATE, MUTATIONS, ACTIONS, GETTERS,
 > = Omit<InstanceType<typeof VuexStore<StoreState<MODULES, ROOTSTATE>>>, 'state' | 'commit' | 'dispatch' | 'getters'> & {
-  state: StoreState<MODULES, ROOTSTATE>
+  state: StoreState<MODULES, GEN_STATE<ROOTSTATE>>
   /** mutations */
   commit: StoreCommit<MODULES, MUTATIONS>
   /** actions */
@@ -500,7 +504,7 @@ interface StoreWrap<
 }
 
 export function defineStore<
-  MODULES = {}, ROOTSTATE extends Record<string, any> = {}, MUTATIONS = {}, ACTIONS = {}, GETTERS = {},
+  MODULES = {}, ROOTSTATE extends STATE_VALUE = {}, MUTATIONS = {}, ACTIONS = {}, GETTERS = {},
 >(options: {
   modules?: { [K in keyof MODULES]:
     MODULES[K] extends ModuleInstance
@@ -512,7 +516,7 @@ export function defineStore<
     /**
      * @param payload Pass `undefined` when no parameters are required
      */
-    (state: NoInfer<ROOTSTATE>, payload: MUTATIONS[K]) => void }
+    (state: GEN_STATE<ROOTSTATE>, payload: MUTATIONS[K]) => void }
   actions?: {
     /**
      * @param payload Pass `undefined` when no parameters are required
@@ -520,13 +524,13 @@ export function defineStore<
     [K in keyof ACTIONS]: <
       DISPATCH extends StoreDispatch<NoInfer<MODULES>, NoInfer<ACTIONS>>, ACTIONGETTERS extends NoInfer<GETTERS>,
     >(injectee: Omit<ActionContext<NoInfer<ROOTSTATE>, NoInfer<ROOTSTATE>>, 'state' | 'commit' | 'dispatch' | 'getters'> & {
-      state: StoreState<NoInfer<MODULES>, NoInfer<ROOTSTATE>>
+      state: StoreState<NoInfer<MODULES>, GEN_STATE<ROOTSTATE>>
       commit: StoreCommit<NoInfer<MODULES>, NoInfer<MUTATIONS>>
       dispatch: DISPATCH
       getters: ACTIONGETTERS
     }, payload: ACTIONS[K]) => void
   }
-  getters?: { [K in keyof GETTERS]: (state: StoreState<NoInfer<MODULES>, NoInfer<ROOTSTATE>>) => GETTERS[K] }
+  getters?: { [K in keyof GETTERS]: (state: StoreState<NoInfer<MODULES>, GEN_STATE<ROOTSTATE>>) => GETTERS[K] }
 
 }, /** only vue2 use */_Vue?: any): StoreWrap<MODULES, ROOTSTATE, MUTATIONS, ACTIONS, GETTERS> {
   if (_Vue && IS_VUEX_3)
