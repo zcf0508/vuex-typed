@@ -6,7 +6,7 @@ import Vuex, {
 } from 'vuex'
 import type { ActionContext, Store as VuexStore } from 'vuex'
 import type { ComputedGetter } from 'vue'
-import type { And, GetModulesKeys, HasDefinedAndNotAny, HasDefinedAndNotAnyAndNonOptional, IsFunction, NoInfer, UnionToIntersection } from './utils'
+import type { And, GetModulesKeys, HasDefinedAndNotAny, HasDefinedAndNotAnyAndNonOptional, NoInfer, UnionToIntersection } from './utils'
 import { IS_VUEX_3 } from './helper'
 
 interface ModuleCommit<MUTATIONS> {
@@ -23,7 +23,7 @@ interface ModuleDispatch<ACTIONS> {
 
 type STATE_VALUE = Record<string, any> | (() => Record<string, any>)
 
-type GEN_STATE<T> = IsFunction<T> extends true ? ReturnType<T extends (...args: any) => any ? T : never> : NoInfer<T>
+type GEN_STATE<T> = T extends (...args: any) => any ? ReturnType<T> : NoInfer<T>
 
 /**
  * Normal Module Instance

@@ -18,7 +18,7 @@ const { store, mapGetters, mapMutations, mapActions, mapState } = defineStore({
   },
   mutations: {
     SET_G_USERNAME_DEFAULT(state) {
-      state.gUsername = 'defoult'
+      state.gUsername = 'default'
     },
     SET_G_USERNAME(state, payload?: string) {
       state.gUsername = payload || ''
