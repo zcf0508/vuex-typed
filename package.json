@@ -50,8 +50,8 @@
     "prepublishOnly": "npm run build",
     "release": "bumpp",
     "start": "esno src/index.ts",
-    "test": "vitest ./test/index3",
-    "test:once": "vitest run ./test/index3 & tsc ./test/index3.test.ts --noEmit",
+    "test": "vitest",
+    "test:once": "vitest run",
     "typecheck": "tsc --noEmit",
     "play": "npm -C playground/vue2 run dev"
   },

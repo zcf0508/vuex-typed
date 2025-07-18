@@ -30,7 +30,7 @@ type GEN_STATE<T> = IsFunction<T> extends true ? ReturnType<T extends (...args: 
  */
 export interface Module<STATE, MUTATIONS, ACTIONS, GETTERS> {
   namespaced: false
-  state: GEN_STATE<STATE>
+  state: STATE
   mutations: { [K in keyof MUTATIONS]: (state: GEN_STATE<STATE>, payload: HasDefinedAndNotAny<MUTATIONS[K]> extends true ? MUTATIONS[K] : undefined) => void }
   actions: { [K in keyof ACTIONS]: (injectee: {
     state: GEN_STATE<STATE>
@@ -454,11 +454,11 @@ interface MapState<STATE, MODULES> {
   }
   // 1.2 accept a object
   <
-    STATE_KEYS extends keyof STATE, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_STATE_KEYS extends GetModulesKeys<MODULES extends Modules ? MODULES : never, 'state'>, MAP extends Record<string, MODULE_STATE_KEYS | STATE_KEYS>,
+    STATE_KEYS extends keyof GEN_STATE<STATE>, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_STATE_KEYS extends GetModulesKeys<MODULES extends Modules ? MODULES : never, 'state'>, MAP extends Record<string, MODULE_STATE_KEYS | STATE_KEYS>,
   >(map: MAP): And<{
     [K in keyof MAP]: ComputedGetter<MAP[K] extends STATE_KEYS ? never : M extends Module<any, any, any, any> ? M['state'][MAP[K]] : never>
   }, {
-    [K in keyof MAP]: ComputedGetter<MAP[K] extends STATE_KEYS ? STATE[MAP[K]] : never>
+    [K in keyof MAP]: ComputedGetter<MAP[K] extends STATE_KEYS ? GEN_STATE<STATE>[MAP[K]] : never>
   }>
   <
     MODULES_KEYS extends keyof MODULES, MAP extends Record<string, ((state: STATE & { [K in MODULES_KEYS]: MODULES[K] extends ModuleInstance ? MODULES[K]['state'] : never }) => any)>,
