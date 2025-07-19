@@ -182,9 +182,7 @@ type StoreCommit<MODULES, MUTATIONS> =
         <
           MS extends FlattenMutations<
             MODULES extends Modules ? MODULES : never
-          >,
-          K extends keyof (MS & MUTATIONS),
-          P extends (K extends keyof MS
+          >, K extends keyof (MS & MUTATIONS), P extends (K extends keyof MS
             ? MS[K] extends (...args: any) => any
               ? Parameters<MS[K]>[1]
               : undefined
@@ -196,9 +194,7 @@ type StoreCommit<MODULES, MUTATIONS> =
         <
           MS extends FlattenMutations<
             MODULES extends Modules ? MODULES : never
-          >,
-          K extends keyof (MS & MUTATIONS),
-          P extends (K extends keyof MS
+          >, K extends keyof (MS & MUTATIONS), P extends (K extends keyof MS
             ? MS[K] extends (...args: any) => any
               ? Parameters<MS[K]>[1]
               : undefined
@@ -210,8 +206,7 @@ type StoreCommit<MODULES, MUTATIONS> =
         <
         MS extends FlattenMutations<
           MODULES extends Modules ? MODULES : never
-        >,
-        K extends keyof (MS & MUTATIONS),
+        >, K extends keyof (MS & MUTATIONS),
       >(input: { type: K } & (
           K extends keyof MS
             ? MS[K] extends (...args: any) => any
@@ -233,36 +228,31 @@ type StoreDispatch<MODULES, ACTIONS> =
         <
           AS extends FlattenActions<
           MODULES extends Modules ? MODULES : never
-        >,
-          K extends keyof (AS & ACTIONS),
-          P extends (K extends keyof AS
-            ? AS[K] extends (...args: any) => any
-              ? Parameters<AS[K]>[1]
-              : never
-            : K extends keyof ACTIONS
-              ? ACTIONS[K]
-              : never),
+        >, K extends keyof (AS & ACTIONS), P extends (K extends keyof AS
+          ? AS[K] extends (...args: any) => any
+            ? Parameters<AS[K]>[1]
+            : never
+          : K extends keyof ACTIONS
+            ? ACTIONS[K]
+            : never),
         >(type: HasDefinedAndNotAnyAndNonOptional<NoInfer<P>> extends true ? never : K, payload?: NoInfer<P> | undefined): Promise<any>
 
         <
           AS extends FlattenActions<
           MODULES extends Modules ? MODULES : never
-        >,
-          K extends keyof (AS & ACTIONS),
-          P extends (K extends keyof AS
-            ? AS[K] extends (...args: any) => any
-              ? Parameters<AS[K]>[1]
-              : undefined
-            : K extends keyof ACTIONS
-              ? ACTIONS[K]
-              : undefined),
+        >, K extends keyof (AS & ACTIONS), P extends (K extends keyof AS
+          ? AS[K] extends (...args: any) => any
+            ? Parameters<AS[K]>[1]
+            : undefined
+          : K extends keyof ACTIONS
+            ? ACTIONS[K]
+            : undefined),
         >(type: K, payload: HasDefinedAndNotAny<NoInfer<P>> extends true ? NoInfer<P> : undefined): Promise<any>
 
         <
           AS extends FlattenActions<
           MODULES extends Modules ? MODULES : never
-        >,
-          K extends keyof (AS & ACTIONS),
+        >, K extends keyof (AS & ACTIONS),
         >(input: { type: K } & (
           K extends keyof AS
             ? AS[K] extends (...args: any) => any
@@ -331,8 +321,7 @@ interface MapMutations<MUTATIONS, MODULES> {
   // 1. without namespace
   // 1.1 accept a object
   <
-    MUTATIONS_KEYS extends keyof MUTATIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_MUTATIONS_KEYS extends GetModulesKeys<MODULES extends Modules ? MODULES : never, 'mutations'>, MAP extends Record<string, MODULE_MUTATIONS_KEYS | MUTATIONS_KEYS>,
-    MM extends M extends Module<any, any, any, any> ? PickModuleMutaions<M> : never,
+    MUTATIONS_KEYS extends keyof MUTATIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_MUTATIONS_KEYS extends GetModulesKeys<MODULES extends Modules ? MODULES : never, 'mutations'>, MAP extends Record<string, MODULE_MUTATIONS_KEYS | MUTATIONS_KEYS>, MM extends M extends Module<any, any, any, any> ? PickModuleMutaions<M> : never,
   >(map: MAP): {
     [K in keyof MAP]:
     MAP[K] extends MODULE_MUTATIONS_KEYS
@@ -347,8 +336,7 @@ interface MapMutations<MUTATIONS, MODULES> {
   }
   // 1.2 accept a list
   <
-    MUTATIONS_KEYS extends keyof MUTATIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_MUTATIONS_KEYS extends GetModulesKeys<MODULES extends Modules ? MODULES : never, 'mutations'>, KEY_ITEM extends string,
-    MM extends M extends Module<any, any, any, any> ? PickModuleMutaions<M> : never,
+    MUTATIONS_KEYS extends keyof MUTATIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_MUTATIONS_KEYS extends GetModulesKeys<MODULES extends Modules ? MODULES : never, 'mutations'>, KEY_ITEM extends string, MM extends M extends Module<any, any, any, any> ? PickModuleMutaions<M> : never,
   >(map: KEY_ITEM[]): {
     [K in KEY_ITEM extends MODULE_MUTATIONS_KEYS | MUTATIONS_KEYS ? KEY_ITEM : never]:
     K extends MODULE_MUTATIONS_KEYS
@@ -386,8 +374,7 @@ interface MapActions<ACTIONS, MODULES> {
   // 1. without namespace
   // 1.1 accept a list
   <
-    ACTIONS_KEYS extends keyof ACTIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_ACTIONS_KEYS extends GetModulesKeys<MODULES extends Modules ? MODULES : never, 'actions'>, KEY_ITEM extends string,
-    MA extends M extends Module<any, any, any, any> ? PickModuleActions<M> : never,
+    ACTIONS_KEYS extends keyof ACTIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_ACTIONS_KEYS extends GetModulesKeys<MODULES extends Modules ? MODULES : never, 'actions'>, KEY_ITEM extends string, MA extends M extends Module<any, any, any, any> ? PickModuleActions<M> : never,
   >(map: KEY_ITEM[]): {
     [K in KEY_ITEM extends MODULE_ACTIONS_KEYS | ACTIONS_KEYS ? KEY_ITEM : never]:
     K extends MODULE_ACTIONS_KEYS
@@ -402,8 +389,7 @@ interface MapActions<ACTIONS, MODULES> {
   }
   // 1.2 accept a object
   <
-    ACTIONS_KEYS extends keyof ACTIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_ACTIONS_KEYS extends GetModulesKeys<MODULES extends Modules ? MODULES : never, 'actions'>, MAP extends Record<string, MODULE_ACTIONS_KEYS | ACTIONS_KEYS>,
-    MA extends M extends Module<any, any, any, any> ? PickModuleActions<M> : never,
+    ACTIONS_KEYS extends keyof ACTIONS, MODULES_KEYS extends keyof MODULES, M extends (MODULES[MODULES_KEYS] extends ModuleInstance ? MODULES[MODULES_KEYS] : never), MODULE_ACTIONS_KEYS extends GetModulesKeys<MODULES extends Modules ? MODULES : never, 'actions'>, MAP extends Record<string, MODULE_ACTIONS_KEYS | ACTIONS_KEYS>, MA extends M extends Module<any, any, any, any> ? PickModuleActions<M> : never,
   >(map: MAP): {
     [K in keyof MAP]:
     MAP[K] extends MODULE_ACTIONS_KEYS
