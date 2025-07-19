@@ -64,7 +64,7 @@
     "@types/node": "20.4.5",
     "@typescript-eslint/eslint-plugin": "6.0.0",
     "@typescript-eslint/parser": "6.0.0",
-    "bumpp": "^9.1.1",
+    "bumpp": "9.1.1",
     "eslint": "^8.45.0",
     "eslint-plugin-jsonc": "2.9.0",
     "happy-dom": "10.11.2",
