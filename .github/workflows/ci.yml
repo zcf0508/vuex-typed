@@ -17,16 +17,14 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
-        with:
-          version: 9
 
       - name: Set node
         uses: actions/setup-node@v3
         with:
-          node-version: 20.x
+          node-version: 18.x
 
       - name: Setup
-        run: npm i -g pnpm@9
+        run: npm i -g pnpm
 
       - name: Install
         run: pnpm install
@@ -48,8 +46,6 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
-        with:
-          version: 9
 
       - name: Set node ${{ matrix.node }}
         uses: actions/setup-node@v3
@@ -57,7 +53,7 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Setup
-        run: npm i -g pnpm@9
+        run: npm i -g pnpm@7
 
       - name: Install
         run: pnpm install
