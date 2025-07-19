@@ -1,11 +1,12 @@
+/* eslint-disable vue/one-component-per-file */
 import { assertType, describe, expect, it } from 'vitest'
 import { createStore } from 'vuex'
 import { defineComponent } from 'vue'
-import { defineModule, defineStore } from '../src'
-import { userModule } from './modules/user'
-import { user22Module } from './modules/user2'
-import { countModule } from './modules/count'
-import { mount } from './helper'
+import { defineModule, defineStore } from '../../src'
+import { userModule } from '../modules/user'
+import { user22Module } from '../modules/user2'
+import { countModule } from '../modules/count'
+import { mount } from '../helper'
 
 const { store, mapGetters, mapMutations, mapActions, mapState } = defineStore({
   state: {

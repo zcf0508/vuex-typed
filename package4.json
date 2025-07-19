@@ -45,8 +45,8 @@
   },
   "scripts": {
     "build": "unbuild",
-    "test": "vitest ./test/index4",
-    "test:once": "vitest run ./test/index4 & tsc ./test/index4.test.ts --noEmit",
+    "test": "vitest vuex4",
+    "test:once": "vitest run vuex4",
     "typecheck": "tsc --noEmit",
     "play": "npm -C playground/vue3 run dev"
   },
